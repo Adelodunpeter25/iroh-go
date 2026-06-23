@@ -1,9 +1,9 @@
-# connect
+t connect
 
 ## Build a binary
 
 ```
-go build --ldflags '-linkmode external -extldflags=-static -s -w' ./main.go
+go build --ldflags '-linkmode external -extldflags=-static -s -w' ./connect.go
 ```
 
 If you run into `glibc` incompatibility, you can compile with `zig`/`musl`.
