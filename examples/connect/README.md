@@ -1,4 +1,4 @@
-t connect
+# connect
 
 A simple connection test where one peer can send and the other can receive. See
 [`../pairchat`](../pairchat) for a more complete bidirectional example.
