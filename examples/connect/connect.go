@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"flag"
 	"fmt"
+	"strings"
 	"os"
 	"os/signal"
 	"syscall"
@@ -82,7 +83,17 @@ func handleIncoming (incoming *iroh.Incoming) {
 	recv := stream.Recv()
 	for {
 		frame, err := recv.Read(frameSize)
-		check(err)
+		// handle timeout
+		if err != nil {
+			irohErr := err.(*iroh.IrohError)
+			errMsg := irohErr.Message()
+			if strings.HasPrefix(errMsg, "ConnectionLost") {
+				fmt.Println("lost connection")
+				break
+			} else {
+				check(err)
+			}
+		}
 		fmt.Println(string(frame))
 	}
 }
