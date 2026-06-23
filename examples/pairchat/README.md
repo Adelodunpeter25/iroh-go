@@ -1,8 +1,8 @@
 # pairchat
 
-This is a more complicated version of `examples/connect` which allows the listener to also
-write back to the sender. The result is a basic pairwise (only 2 peers can connect at once)
-chat program.
+This is a more complicated version of [`../connect`](../connect) which allows
+the listener to also write back to the sender. The result is a basic pairwise
+(only 2 peers can connect at once) chat program.
 
 ## Build a binary
 
