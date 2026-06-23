@@ -1,2 +1,4 @@
-iroh-go/target/
 .*.sw[a-z]
+examples/connect/connect
+examples/pairchat/pairchat
+iroh-go/target/
