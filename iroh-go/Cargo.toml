@@ -1,0 +1,28 @@
+[package]
+name = "iroh-go"
+version = "0.1.0"
+edition = "2024"
+publish = false
+
+[lib]
+name = "iroh"
+crate-type = ["staticlib"]
+
+[[bin]]
+name = "uniffi-bindgen"
+path = "src/uniffi-bindgen.rs"
+
+[dependencies]
+# NOTE(d1): locally patched with https://github.com/n0-computer/iroh-ffi/pull/254
+# iroh-ffi = { git = "https://github.com/n0-computer/iroh-ffi" }
+iroh-ffi = { path = "../../iroh-ffi" }
+
+# [build-dependencies]
+# uniffi = { version = "0.31.1", features = ["build"] }
+
+[profile.release]
+codegen-units = 1
+lto = true
+opt-level = "z"
+panic = "unwind"
+strip = true
