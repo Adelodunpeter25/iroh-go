@@ -63,7 +63,13 @@ func send(e *iroh.Endpoint, id string) {
 }
 
 func listen(e *iroh.Endpoint) {
-	incoming := *e.AcceptNext()
+	for {
+		incoming := *e.AcceptNext()
+		go handleIncoming(incoming)
+	}
+}
+
+func handleIncoming (incoming *iroh.Incoming) {
 	accepting, err := incoming.Accept()
 	check(err)
 
