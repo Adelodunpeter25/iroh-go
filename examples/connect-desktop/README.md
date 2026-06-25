@@ -1,4 +1,4 @@
-# connect-desktop-example
+# connect-desktop
 
 A version of [`../connect`](../connect) as a desktop application. On running the desktop
 application, an Iroh endpoint id will be displayed. This id can be pluggedinto a terminal
