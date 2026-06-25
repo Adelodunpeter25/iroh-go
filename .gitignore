@@ -2,3 +2,6 @@
 examples/connect/connect
 examples/pairchat/pairchat
 iroh-go/target/
+examples/connect-desktop/build
+examples/connect-desktop/frontend/dist
+examples/connect-desktop/frontend/wailsjs
