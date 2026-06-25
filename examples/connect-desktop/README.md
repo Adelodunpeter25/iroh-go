@@ -1,6 +1,9 @@
 # connect-desktop-example
 
-A version of [`../connect`](../connect) as a desktop application.
+A version of [`../connect`](../connect) as a desktop application. On running the desktop
+application, an Iroh endpoint id will be displayed. This id can be pluggedinto a terminal
+running the [`../connect`](../connect) example as a sender. What the sender types in the
+terminal will appear in the connect-desktop application window.
 
 ## Dependencies
 
