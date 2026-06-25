@@ -3,11 +3,11 @@ package main
 import (
 	"flag"
 	"fmt"
-	"time"
-	"strings"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
+	"time"
 
 	iroh "git.coopcloud.tech/decentral1se/iroh-go"
 )
@@ -45,7 +45,7 @@ func receiver(e *iroh.Endpoint, id string) {
 	conn, err := e.Connect(addr, alpn)
 	check(err)
 
-	// from docs: 
+	// from docs:
 	// "The peer that calls open_bi must write to its SendStream before the peer Connection is able to accept the stream
 	// using accept_bi()"
 	// https://docs.rs/iroh/latest/iroh/endpoint/struct.Connection.html#method.accept_bi
@@ -86,7 +86,6 @@ func checkForTimeout(err error) bool {
 	return false
 }
 
-
 func listen(e *iroh.Endpoint) {
 	for {
 		incoming := *e.AcceptNext()
@@ -95,7 +94,7 @@ func listen(e *iroh.Endpoint) {
 	}
 }
 
-func handleIncoming (incoming *iroh.Incoming) {
+func handleIncoming(incoming *iroh.Incoming) {
 	accepting, err := incoming.Accept()
 	check(err)
 
