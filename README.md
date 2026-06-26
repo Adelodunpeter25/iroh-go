@@ -1,18 +1,45 @@
-# iroh-go
+# `iroh-go`
 
-> **WARNING** Extremely Experimental ™️
+> **WARNING** Highly Experimental ™️
 
-Go bindings for [`iroh-ffi`](https://github.com/n0-computer/iroh-ffi). They're
-ready for testing but due to [this
-issue](https://github.com/n0-computer/iroh-ffi/issues/248#issuecomment-4777541073),
-there are surely unknown horrors awaiting you deep inside the `staticlib`. It's
-a work in progress but you can yeet some bytes across the interwebz Right Now
-✅
+Go FFI bindings for [`iroh`](https://iroh.computer) via
+[`iroh-ffi`](https://github.com/n0-computer/iroh-ffi).
+
+## Motivation
+
+The goal is to provide, as far as possible, seamless "just `go build` it"
+support for Go iroh hackers without requiring them to deal with shared
+libraries, the Rust toolchain or a deepdive in how FFI works.
+
+The current approach is to embed `libiroh` as a `staticlib` built with Rust for
+each platform. We use [`musl`](https://musl.libc.org) to avoid `glibc`
+incompatibilities on different linux systems.
+
+It's then possible to build a static binary with `go build` or [with
+Zig](https://dev.to/kristoff/zig-makes-go-cross-compilation-just-work-29ho).
+`iroh-go` does require `CGO_ENABLED=1`.
+
+## Platform support
+
+* `x86_64-unknown-linux-musl`
+
+## Documentation
+
+See [`docs.rs`](https://docs.rs/iroh/1.0.0/iroh/).
 
 ## Examples
 
 See [`examples`](./examples).
 
-## Rebuild `iroh-ffi`
+## Known issues
 
-`./scripts/generate.sh`
+* We need to patch the upstream `iroh-ffi` `endpoint.rs` to fix an
+  incompatibility with
+  [`uniffi-bindgen-go`](https://github.com/NordSecurity/uniffi-bindgen-go). See
+  [this
+  commit](https://github.com/decentral1se/iroh-ffi/commit/3e102569e1c348480416a9b05cf020760f607dfe)
+  for more.
+* We need to patch the upstream `iroh-ffi` `Cargo.toml` to remove the
+  `crate-type` configuration when runnings builds here. See [this
+  commit](https://github.com/decentral1se/iroh-ffi/commit/207e5d7cd7dee6eab350d3aad85029431a63ca3f)
+  for more.
