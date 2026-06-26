@@ -4,9 +4,9 @@ import (
 	"bufio"
 	"flag"
 	"fmt"
-	"strings"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 
 	iroh "git.coopcloud.tech/decentral1se/iroh-go"
@@ -70,7 +70,7 @@ func listen(e *iroh.Endpoint) {
 	}
 }
 
-func handleIncoming (incoming *iroh.Incoming) {
+func handleIncoming(incoming *iroh.Incoming) {
 	accepting, err := incoming.Accept()
 	check(err)
 

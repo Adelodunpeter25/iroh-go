@@ -4,9 +4,9 @@ import (
 	"bufio"
 	"flag"
 	"fmt"
-	"strings"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 
 	iroh "git.coopcloud.tech/decentral1se/iroh-go"
@@ -61,7 +61,7 @@ func listen(e *iroh.Endpoint) {
 	}
 }
 
-func handleIncoming (incoming *iroh.Incoming) {
+func handleIncoming(incoming *iroh.Incoming) {
 	accepting, err := incoming.Accept()
 	check(err)
 
@@ -77,7 +77,7 @@ func handleIncoming (incoming *iroh.Incoming) {
 	go handleReading(recv, done)
 }
 
-func handleInput (stream *iroh.BiStream, done chan struct{}) {
+func handleInput(stream *iroh.BiStream, done chan struct{}) {
 	scanner := bufio.NewScanner(os.Stdin)
 	for scanner.Scan() {
 		if line := scanner.Text(); line != "" {
@@ -117,7 +117,6 @@ func handleReading(recv *iroh.RecvStream, done chan struct{}) {
 	}
 	close(done)
 }
-
 
 func main() {
 	parseFlags()
