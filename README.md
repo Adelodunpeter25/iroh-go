@@ -24,7 +24,9 @@ Zig](https://dev.to/kristoff/zig-makes-go-cross-compilation-just-work-29ho).
 
 ## Documentation
 
-See [`docs.rs`](https://docs.rs/iroh/1.0.0/iroh/).
+See [`docs.rs`](https://docs.rs/iroh/1.0.0/iroh/) for the original Rust API
+documentation. The exposed Go API is 1:1. Here's the Go bindings documentation
+on [`godocs.io`](https://godocs.io/git.coopcloud.tech/decentral1se/iroh-go).
 
 ## Examples
 
