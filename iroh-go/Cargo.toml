@@ -8,17 +8,8 @@ publish = false
 name = "iroh"
 crate-type = ["staticlib"]
 
-[[bin]]
-name = "uniffi-bindgen"
-path = "src/uniffi-bindgen.rs"
-
 [dependencies]
-# NOTE(d1): locally patched with https://github.com/n0-computer/iroh-ffi/pull/254
-# iroh-ffi = { git = "https://github.com/n0-computer/iroh-ffi" }
-iroh-ffi = { path = "../../iroh-ffi" }
-
-# [build-dependencies]
-# uniffi = { version = "0.31.1", features = ["build"] }
+iroh-ffi = { git = "https://github.com/decentral1se/iroh-ffi", rev = "3e102569e1c348480416a9b05cf020760f607dfe" }
 
 [profile.release]
 codegen-units = 1
