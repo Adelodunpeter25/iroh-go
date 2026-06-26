@@ -30,6 +30,12 @@ See [`docs.rs`](https://docs.rs/iroh/1.0.0/iroh/).
 
 See [`examples`](./examples).
 
+## Generate bindings
+
+See [`iroh-go`](./iroh-go) for the Rust toolchain configuration. Run
+`./scripts/generate.sh` to build a new set of libraries which end up vendored
+in [`libs`](./libs).
+
 ## Known issues
 
 * We need to patch the upstream `iroh-ffi` `endpoint.rs` to fix an
