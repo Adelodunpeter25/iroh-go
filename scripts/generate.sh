@@ -9,7 +9,7 @@ RUST_FOLDER="$THIS_SCRIPT_DIR/../iroh-go"
 FFI_FOLDER="$THIS_SCRIPT_DIR/../iroh-ffi"
 GO_FOLDER="$THIS_SCRIPT_DIR/../"
 
-TARGETS="x86_64-unknown-linux-musl"
+TARGETS="x86_64-unknown-linux-musl aarch64-unknown-linux-musl"
 
 if ! command -v cross &> /dev/null; then
   echo "▸ cross tool not found, installing"

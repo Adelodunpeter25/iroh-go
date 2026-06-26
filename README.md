@@ -9,19 +9,18 @@ Go FFI bindings for [`iroh`](https://iroh.computer) via
 
 The goal is to provide, as far as possible, seamless "just `go build` it"
 support for Go iroh hackers without requiring them to deal with shared
-libraries, the Rust toolchain or a deepdive in how FFI works.
-
-The current approach is to embed `libiroh` as a `staticlib` built with Rust for
-each platform. We use [`musl`](https://musl.libc.org) to avoid `glibc`
-incompatibilities on different linux systems.
-
-It's then possible to build a static binary with `go build` or [with
+libraries, the Rust toolchain or a deepdive in how FFI works. The current
+approach is to embed `libiroh` as a `staticlib` built with Rust for each
+platform. We use [`musl`](https://musl.libc.org) to avoid `glibc`
+incompatibilities on different linux systems. It's then possible to build a
+static binary with `go build` or [with
 Zig](https://dev.to/kristoff/zig-makes-go-cross-compilation-just-work-29ho).
 `iroh-go` does require `CGO_ENABLED=1`.
 
 ## Platform support
 
 * `x86_64-unknown-linux-musl`
+* `aarch64-unknown-linux-musl`
 
 ## Documentation
 
