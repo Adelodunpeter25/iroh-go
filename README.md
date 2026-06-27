@@ -50,3 +50,8 @@ in [`libs`](./libs).
   `crate-type` configuration when runnings builds here. See [this
   commit](https://github.com/decentral1se/iroh-ffi/commit/207e5d7cd7dee6eab350d3aad85029431a63ca3f)
   for more.
+
+## Licenses
+
+Apache 2.0 & MIT, following the upstream licensing choices in
+[`iroh-ffi`](https://github.com/n0-computer/iroh-ffi).
