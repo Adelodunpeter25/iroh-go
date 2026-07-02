@@ -38,6 +38,10 @@ See [`iroh-go`](./iroh-go) for the Rust toolchain configuration. Run
 `./scripts/generate.sh` to build a new set of libraries which end up vendored
 in [`libs`](./libs).
 
+## Who is using it?
+
+* [`iroh-tracker`](https://git.coopcloud.tech/cblgh/iroh-tracker)
+
 ## Known issues
 
 * We need to patch the upstream `iroh-ffi` `endpoint.rs` to fix an
