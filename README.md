@@ -82,6 +82,9 @@ in [`libs`](./libs).
   `crate-type` configuration when runnings builds here. See [this
   commit](https://github.com/decentral1se/iroh-ffi/commit/207e5d7cd7dee6eab350d3aad85029431a63ca3f)
   for more.
+* Error handling is extremely inconvenient due to
+  [`iroh-ffi#263`](https://github.com/n0-computer/iroh-ffi/issues/263).
+  Proposals for improvement are very welcome.
 
 ## Licenses
 
