@@ -32,6 +32,34 @@ on [`godocs.io`](https://godocs.io/git.coopcloud.tech/decentral1se/iroh-go).
 
 See [`examples`](./examples).
 
+## Run your own `iroh-relay`
+
+See [`iroh-relay`](https://git.coopcloud.tech/decentral1se/iroh-relay) if you
+want more small footprint static binary goodness. You can also make use of the
+upstream provided docker image: `n0computer/iroh-relay`.
+
+### Local hacking
+
+First, run `iroh-relay` in development mode with noisy logging.
+
+```
+RUST_LOG=info,iroh_relay=debug ./iroh-relay --dev
+```
+
+You can then use `http://localhost:3340` as the default location of your own
+relay in the construction of your endpoint as follows. Once you create an
+endpoint, you should see your relay respond locally with corresponding logs.
+
+```go
+preset := iroh.PresetN0DisableRelay()
+relay, _ := iroh.RelayModeCustomFromUrls([]string{"http://localhost:3340"})
+opts := iroh.EndpointOptions{
+    Preset:    &preset,
+    RelayMode: &relay,
+    // ...moar config...
+}
+```
+
 ## Generate bindings
 
 See [`iroh-go`](./iroh-go) for the Rust toolchain configuration. Run
