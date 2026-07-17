@@ -4,5 +4,5 @@ examples/connect-desktop/frontend/dist
 examples/connect-desktop/frontend/wailsjs
 examples/connect/connect
 examples/pairchat/pairchat
-examples/pairchat/timeserve
+examples/timeserve/timeserve
 iroh-go/target/
