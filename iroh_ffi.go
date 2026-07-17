@@ -977,6 +977,15 @@ func uniffiCheckChecksums() {
 	}
 	{
 		checksum := rustCall(func(_uniffiStatus *C.RustCallStatus) C.uint16_t {
+			return C.uniffi_iroh_ffi_checksum_method_endpointbuilder_bind()
+		})
+		if checksum != 5850 {
+			// If this happens try cleaning and rebuilding your project
+			panic("iroh_ffi: uniffi_iroh_ffi_checksum_method_endpointbuilder_bind: UniFFI API checksum mismatch")
+		}
+	}
+	{
+		checksum := rustCall(func(_uniffiStatus *C.RustCallStatus) C.uint16_t {
 			return C.uniffi_iroh_ffi_checksum_method_endpointbuilder_bind_addr()
 		})
 		if checksum != 50528 {
@@ -1175,9 +1184,36 @@ func uniffiCheckChecksums() {
 	}
 	{
 		checksum := rustCall(func(_uniffiStatus *C.RustCallStatus) C.uint16_t {
+			return C.uniffi_iroh_ffi_checksum_method_iroherror_debug_message()
+		})
+		if checksum != 33751 {
+			// If this happens try cleaning and rebuilding your project
+			panic("iroh_ffi: uniffi_iroh_ffi_checksum_method_iroherror_debug_message: UniFFI API checksum mismatch")
+		}
+	}
+	{
+		checksum := rustCall(func(_uniffiStatus *C.RustCallStatus) C.uint16_t {
+			return C.uniffi_iroh_ffi_checksum_method_iroherror_is_kind()
+		})
+		if checksum != 10479 {
+			// If this happens try cleaning and rebuilding your project
+			panic("iroh_ffi: uniffi_iroh_ffi_checksum_method_iroherror_is_kind: UniFFI API checksum mismatch")
+		}
+	}
+	{
+		checksum := rustCall(func(_uniffiStatus *C.RustCallStatus) C.uint16_t {
+			return C.uniffi_iroh_ffi_checksum_method_iroherror_kind()
+		})
+		if checksum != 11512 {
+			// If this happens try cleaning and rebuilding your project
+			panic("iroh_ffi: uniffi_iroh_ffi_checksum_method_iroherror_kind: UniFFI API checksum mismatch")
+		}
+	}
+	{
+		checksum := rustCall(func(_uniffiStatus *C.RustCallStatus) C.uint16_t {
 			return C.uniffi_iroh_ffi_checksum_method_iroherror_message()
 		})
-		if checksum != 64767 {
+		if checksum != 60838 {
 			// If this happens try cleaning and rebuilding your project
 			panic("iroh_ffi: uniffi_iroh_ffi_checksum_method_iroherror_message: UniFFI API checksum mismatch")
 		}
@@ -1459,6 +1495,15 @@ func uniffiCheckChecksums() {
 		if checksum != 33964 {
 			// If this happens try cleaning and rebuilding your project
 			panic("iroh_ffi: uniffi_iroh_ffi_checksum_constructor_endpoint_bind: UniFFI API checksum mismatch")
+		}
+	}
+	{
+		checksum := rustCall(func(_uniffiStatus *C.RustCallStatus) C.uint16_t {
+			return C.uniffi_iroh_ffi_checksum_constructor_endpointbuilder_new()
+		})
+		if checksum != 16347 {
+			// If this happens try cleaning and rebuilding your project
+			panic("iroh_ffi: uniffi_iroh_ffi_checksum_constructor_endpointbuilder_new: UniFFI API checksum mismatch")
 		}
 	}
 	{
@@ -3906,6 +3951,13 @@ type EndpointBuilderInterface interface {
 	ApplyN0()
 	// Replay the n0 preset with relays disabled.
 	ApplyN0DisableRelay()
+	// Consume the builder and bind a new [`Endpoint`].
+	//
+	// The returned `Endpoint` has no protocol handlers — use
+	// [`Endpoint::bind`] with [`EndpointOptions::protocols`] to attach them.
+	// The builder is single-use; a second `bind` returns
+	// `EndpointBuilder already consumed`.
+	Bind() (*Endpoint, error)
 	// Set the address the endpoint binds to (`host:port`).
 	BindAddr(addr string) error
 	// Set the relay mode.
@@ -3923,6 +3975,15 @@ type EndpointBuilderInterface interface {
 // baseline before layering its own configuration.
 type EndpointBuilder struct {
 	ffiObject FfiObject
+}
+
+// Create a fresh empty endpoint builder. Apply a preset (`apply_n0`,
+// `apply_minimal`, `apply_n0_disable_relay`) before [`bind`](Self::bind);
+// the preset installs the crypto provider, without one `bind` will error.
+func NewEndpointBuilder() *EndpointBuilder {
+	return FfiConverterEndpointBuilderINSTANCE.Lift(rustCall(func(_uniffiStatus *C.RustCallStatus) C.uint64_t {
+		return C.uniffi_iroh_ffi_fn_constructor_endpointbuilder_new(_uniffiStatus)
+	}))
 }
 
 // Set the advertised ALPNs.
@@ -3967,6 +4028,45 @@ func (_self *EndpointBuilder) ApplyN0DisableRelay() {
 			_pointer, _uniffiStatus)
 		return false
 	})
+}
+
+// Consume the builder and bind a new [`Endpoint`].
+//
+// The returned `Endpoint` has no protocol handlers — use
+// [`Endpoint::bind`] with [`EndpointOptions::protocols`] to attach them.
+// The builder is single-use; a second `bind` returns
+// `EndpointBuilder already consumed`.
+func (_self *EndpointBuilder) Bind() (*Endpoint, error) {
+	_pointer := _self.ffiObject.incrementPointer("*EndpointBuilder")
+	defer _self.ffiObject.decrementPointer()
+	res, err := uniffiRustCallAsync[*IrohError](
+		FfiConverterIrohErrorINSTANCE,
+		// completeFn
+		func(handle C.uint64_t, status *C.RustCallStatus) C.uint64_t {
+			res := C.ffi_iroh_ffi_rust_future_complete_u64(handle, status)
+			return res
+		},
+		// liftFn
+		func(ffi C.uint64_t) *Endpoint {
+			return FfiConverterEndpointINSTANCE.Lift(ffi)
+		},
+		C.uniffi_iroh_ffi_fn_method_endpointbuilder_bind(
+			_pointer),
+		// pollFn
+		func(handle C.uint64_t, continuation C.UniffiRustFutureContinuationCallback, data C.uint64_t) {
+			C.ffi_iroh_ffi_rust_future_poll_u64(handle, continuation, data)
+		},
+		// freeFn
+		func(handle C.uint64_t) {
+			C.ffi_iroh_ffi_rust_future_free_u64(handle)
+		},
+	)
+
+	if err == nil {
+		return res, nil
+	}
+
+	return res, err
 }
 
 // Set the address the endpoint binds to (`host:port`).
@@ -4886,6 +4986,14 @@ func (_ FfiDestroyerIncoming) Destroy(value *Incoming) {
 
 // An Error.
 type IrohErrorInterface interface {
+	// Detailed debug representation of the original Rust error.
+	DebugMessage() string
+	// Convenience helper for bindings that do not expose enum comparison
+	// ergonomically.
+	IsKind(kind IrohErrorKind) bool
+	// Stable high-level error category.
+	Kind() IrohErrorKind
+	// Human-readable error message.
 	Message() string
 }
 
@@ -4894,6 +5002,42 @@ type IrohError struct {
 	ffiObject FfiObject
 }
 
+// Detailed debug representation of the original Rust error.
+func (_self *IrohError) DebugMessage() string {
+	_pointer := _self.ffiObject.incrementPointer("*IrohError")
+	defer _self.ffiObject.decrementPointer()
+	return FfiConverterStringINSTANCE.Lift(rustCall(func(_uniffiStatus *C.RustCallStatus) RustBufferI {
+		return GoRustBuffer{
+			inner: C.uniffi_iroh_ffi_fn_method_iroherror_debug_message(
+				_pointer, _uniffiStatus),
+		}
+	}))
+}
+
+// Convenience helper for bindings that do not expose enum comparison
+// ergonomically.
+func (_self *IrohError) IsKind(kind IrohErrorKind) bool {
+	_pointer := _self.ffiObject.incrementPointer("*IrohError")
+	defer _self.ffiObject.decrementPointer()
+	return FfiConverterBoolINSTANCE.Lift(rustCall(func(_uniffiStatus *C.RustCallStatus) C.int8_t {
+		return C.uniffi_iroh_ffi_fn_method_iroherror_is_kind(
+			_pointer, FfiConverterIrohErrorKindINSTANCE.Lower(kind), _uniffiStatus)
+	}))
+}
+
+// Stable high-level error category.
+func (_self *IrohError) Kind() IrohErrorKind {
+	_pointer := _self.ffiObject.incrementPointer("*IrohError")
+	defer _self.ffiObject.decrementPointer()
+	return FfiConverterIrohErrorKindINSTANCE.Lift(rustCall(func(_uniffiStatus *C.RustCallStatus) RustBufferI {
+		return GoRustBuffer{
+			inner: C.uniffi_iroh_ffi_fn_method_iroherror_kind(
+				_pointer, _uniffiStatus),
+		}
+	}))
+}
+
+// Human-readable error message.
 func (_self *IrohError) Message() string {
 	_pointer := _self.ffiObject.incrementPointer("*IrohError")
 	defer _self.ffiObject.decrementPointer()
@@ -8599,6 +8743,73 @@ type FfiDestroyerIncomingLocalAddr struct{}
 
 func (_ FfiDestroyerIncomingLocalAddr) Destroy(value IncomingLocalAddr) {
 	value.Destroy()
+}
+
+// Stable high-level error categories exposed across the FFI boundary.
+//
+// These are intentionally coarser than the upstream Rust error types. They
+// give foreign bindings a stable taxonomy for `errors.Is`-style handling
+// without leaking the internal `iroh` / `n0-error` error hierarchy.
+type IrohErrorKind uint
+
+const (
+	// Invalid input supplied by the caller.
+	IrohErrorKindInvalidInput IrohErrorKind = 1
+	// Failure while binding an endpoint.
+	IrohErrorKindBind IrohErrorKind = 2
+	// Failure while initiating or completing an outgoing connection.
+	IrohErrorKindConnect IrohErrorKind = 3
+	// An established connection failed or closed unexpectedly.
+	IrohErrorKindConnection IrohErrorKind = 4
+	// ALPN negotiation or lookup failed.
+	IrohErrorKindAlpn IrohErrorKind = 5
+	// Endpoint id / public key parsing failed.
+	IrohErrorKindKeyParsing IrohErrorKind = 6
+	// Ticket parsing failed.
+	IrohErrorKindTicketParsing IrohErrorKind = 7
+	// Relay configuration or relay operation failed.
+	IrohErrorKindRelay IrohErrorKind = 8
+	// Stream read/write/control operation failed.
+	IrohErrorKindStream IrohErrorKind = 9
+	// Datagram send/receive operation failed.
+	IrohErrorKindDatagram IrohErrorKind = 10
+	// Foreign callback failed.
+	IrohErrorKindCallback IrohErrorKind = 11
+	// Operation was attempted on a closed stream/connection/resource.
+	IrohErrorKindClosed IrohErrorKind = 12
+	// Operation timed out.
+	IrohErrorKindTimeout IrohErrorKind = 13
+	// Unclassified internal error.
+	IrohErrorKindInternal IrohErrorKind = 14
+)
+
+type FfiConverterIrohErrorKind struct{}
+
+var FfiConverterIrohErrorKindINSTANCE = FfiConverterIrohErrorKind{}
+
+func (c FfiConverterIrohErrorKind) Lift(rb RustBufferI) IrohErrorKind {
+	return LiftFromRustBuffer[IrohErrorKind](c, rb)
+}
+
+func (c FfiConverterIrohErrorKind) Lower(value IrohErrorKind) C.RustBuffer {
+	return LowerIntoRustBuffer[IrohErrorKind](c, value)
+}
+
+func (c FfiConverterIrohErrorKind) LowerExternal(value IrohErrorKind) ExternalCRustBuffer {
+	return RustBufferFromC(LowerIntoRustBuffer[IrohErrorKind](c, value))
+}
+func (FfiConverterIrohErrorKind) Read(reader io.Reader) IrohErrorKind {
+	id := readInt32(reader)
+	return IrohErrorKind(id)
+}
+
+func (FfiConverterIrohErrorKind) Write(writer io.Writer, value IrohErrorKind) {
+	writeInt32(writer, int32(value))
+}
+
+type FfiDestroyerIrohErrorKind struct{}
+
+func (_ FfiDestroyerIrohErrorKind) Destroy(value IrohErrorKind) {
 }
 
 // The logging level. See the rust (log crate)[https://docs.rs/log] for more information.

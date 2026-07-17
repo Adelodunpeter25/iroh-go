@@ -934,6 +934,12 @@ uint64_t uniffi_iroh_ffi_fn_clone_endpointbuilder(uint64_t handle, RustCallStatu
 void uniffi_iroh_ffi_fn_free_endpointbuilder(uint64_t handle, RustCallStatus *out_status
 );
 #endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_IROH_FFI_FN_CONSTRUCTOR_ENDPOINTBUILDER_NEW
+#define UNIFFI_FFIDEF_UNIFFI_IROH_FFI_FN_CONSTRUCTOR_ENDPOINTBUILDER_NEW
+uint64_t uniffi_iroh_ffi_fn_constructor_endpointbuilder_new(RustCallStatus *out_status
+    
+);
+#endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_IROH_FFI_FN_METHOD_ENDPOINTBUILDER_ALPNS
 #define UNIFFI_FFIDEF_UNIFFI_IROH_FFI_FN_METHOD_ENDPOINTBUILDER_ALPNS
 void uniffi_iroh_ffi_fn_method_endpointbuilder_alpns(uint64_t ptr, RustBuffer alpns, RustCallStatus *out_status
@@ -952,6 +958,11 @@ void uniffi_iroh_ffi_fn_method_endpointbuilder_apply_n0(uint64_t ptr, RustCallSt
 #ifndef UNIFFI_FFIDEF_UNIFFI_IROH_FFI_FN_METHOD_ENDPOINTBUILDER_APPLY_N0_DISABLE_RELAY
 #define UNIFFI_FFIDEF_UNIFFI_IROH_FFI_FN_METHOD_ENDPOINTBUILDER_APPLY_N0_DISABLE_RELAY
 void uniffi_iroh_ffi_fn_method_endpointbuilder_apply_n0_disable_relay(uint64_t ptr, RustCallStatus *out_status
+);
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_IROH_FFI_FN_METHOD_ENDPOINTBUILDER_BIND
+#define UNIFFI_FFIDEF_UNIFFI_IROH_FFI_FN_METHOD_ENDPOINTBUILDER_BIND
+uint64_t uniffi_iroh_ffi_fn_method_endpointbuilder_bind(uint64_t ptr
 );
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_IROH_FFI_FN_METHOD_ENDPOINTBUILDER_BIND_ADDR
@@ -1137,6 +1148,21 @@ uint64_t uniffi_iroh_ffi_fn_clone_iroherror(uint64_t handle, RustCallStatus *out
 #ifndef UNIFFI_FFIDEF_UNIFFI_IROH_FFI_FN_FREE_IROHERROR
 #define UNIFFI_FFIDEF_UNIFFI_IROH_FFI_FN_FREE_IROHERROR
 void uniffi_iroh_ffi_fn_free_iroherror(uint64_t handle, RustCallStatus *out_status
+);
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_IROH_FFI_FN_METHOD_IROHERROR_DEBUG_MESSAGE
+#define UNIFFI_FFIDEF_UNIFFI_IROH_FFI_FN_METHOD_IROHERROR_DEBUG_MESSAGE
+RustBuffer uniffi_iroh_ffi_fn_method_iroherror_debug_message(uint64_t ptr, RustCallStatus *out_status
+);
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_IROH_FFI_FN_METHOD_IROHERROR_IS_KIND
+#define UNIFFI_FFIDEF_UNIFFI_IROH_FFI_FN_METHOD_IROHERROR_IS_KIND
+int8_t uniffi_iroh_ffi_fn_method_iroherror_is_kind(uint64_t ptr, RustBuffer kind, RustCallStatus *out_status
+);
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_IROH_FFI_FN_METHOD_IROHERROR_KIND
+#define UNIFFI_FFIDEF_UNIFFI_IROH_FFI_FN_METHOD_IROHERROR_KIND
+RustBuffer uniffi_iroh_ffi_fn_method_iroherror_kind(uint64_t ptr, RustCallStatus *out_status
 );
 #endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_IROH_FFI_FN_METHOD_IROHERROR_MESSAGE
@@ -2303,6 +2329,12 @@ uint16_t uniffi_iroh_ffi_checksum_method_endpointbuilder_apply_n0_disable_relay(
     
 );
 #endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_IROH_FFI_CHECKSUM_METHOD_ENDPOINTBUILDER_BIND
+#define UNIFFI_FFIDEF_UNIFFI_IROH_FFI_CHECKSUM_METHOD_ENDPOINTBUILDER_BIND
+uint16_t uniffi_iroh_ffi_checksum_method_endpointbuilder_bind(void
+    
+);
+#endif
 #ifndef UNIFFI_FFIDEF_UNIFFI_IROH_FFI_CHECKSUM_METHOD_ENDPOINTBUILDER_BIND_ADDR
 #define UNIFFI_FFIDEF_UNIFFI_IROH_FFI_CHECKSUM_METHOD_ENDPOINTBUILDER_BIND_ADDR
 uint16_t uniffi_iroh_ffi_checksum_method_endpointbuilder_bind_addr(void
@@ -2432,6 +2464,24 @@ uint16_t uniffi_iroh_ffi_checksum_method_sendstream_write(void
 #ifndef UNIFFI_FFIDEF_UNIFFI_IROH_FFI_CHECKSUM_METHOD_SENDSTREAM_WRITE_ALL
 #define UNIFFI_FFIDEF_UNIFFI_IROH_FFI_CHECKSUM_METHOD_SENDSTREAM_WRITE_ALL
 uint16_t uniffi_iroh_ffi_checksum_method_sendstream_write_all(void
+    
+);
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_IROH_FFI_CHECKSUM_METHOD_IROHERROR_DEBUG_MESSAGE
+#define UNIFFI_FFIDEF_UNIFFI_IROH_FFI_CHECKSUM_METHOD_IROHERROR_DEBUG_MESSAGE
+uint16_t uniffi_iroh_ffi_checksum_method_iroherror_debug_message(void
+    
+);
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_IROH_FFI_CHECKSUM_METHOD_IROHERROR_IS_KIND
+#define UNIFFI_FFIDEF_UNIFFI_IROH_FFI_CHECKSUM_METHOD_IROHERROR_IS_KIND
+uint16_t uniffi_iroh_ffi_checksum_method_iroherror_is_kind(void
+    
+);
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_IROH_FFI_CHECKSUM_METHOD_IROHERROR_KIND
+#define UNIFFI_FFIDEF_UNIFFI_IROH_FFI_CHECKSUM_METHOD_IROHERROR_KIND
+uint16_t uniffi_iroh_ffi_checksum_method_iroherror_kind(void
     
 );
 #endif
@@ -2624,6 +2674,12 @@ uint16_t uniffi_iroh_ffi_checksum_method_watchhandle_stop(void
 #ifndef UNIFFI_FFIDEF_UNIFFI_IROH_FFI_CHECKSUM_CONSTRUCTOR_ENDPOINT_BIND
 #define UNIFFI_FFIDEF_UNIFFI_IROH_FFI_CHECKSUM_CONSTRUCTOR_ENDPOINT_BIND
 uint16_t uniffi_iroh_ffi_checksum_constructor_endpoint_bind(void
+    
+);
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_IROH_FFI_CHECKSUM_CONSTRUCTOR_ENDPOINTBUILDER_NEW
+#define UNIFFI_FFIDEF_UNIFFI_IROH_FFI_CHECKSUM_CONSTRUCTOR_ENDPOINTBUILDER_NEW
+uint16_t uniffi_iroh_ffi_checksum_constructor_endpointbuilder_new(void
     
 );
 #endif
