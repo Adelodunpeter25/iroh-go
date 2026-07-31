@@ -64,13 +64,14 @@ func receiver(e *iroh.Endpoint, id string) {
 func handleReading(recv *iroh.RecvStream) {
 	for {
 		frame, err := recv.Read(frameSize)
-		if checkForTimeout(err) {
+		if errors.Is(err, iroh.TimeoutError) {
+			fmt.Println("lost connection")
 			break
 		}
-		fmt.Println(string(frame))
 		if err := iroh.As(err); err != nil {
 			panic(err)
 		}
+		fmt.Println(string(frame))
 	}
 }
 
@@ -84,13 +85,19 @@ func listen(e *iroh.Endpoint) {
 
 func handleIncoming(incoming *iroh.Incoming) {
 	accepting, err := incoming.Accept()
-	check(err)
+	if err := iroh.As(err); err != nil {
+		panic(err)
+	}
 
 	conn, err := accepting.Connect()
-	check(err)
+	if err := iroh.As(err); err != nil {
+		panic(err)
+	}
 
 	stream, err := conn.AcceptBi()
-	check(err)
+	if err := iroh.As(err); err != nil {
+		panic(err)
+	}
 
 	for {
 		err := stream.Send().WriteAll([]byte(time.Now().Format(time.DateTime)))
