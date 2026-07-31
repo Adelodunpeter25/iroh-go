@@ -21,14 +21,19 @@ Zig](https://dev.to/kristoff/zig-makes-go-cross-compilation-just-work-29ho).
 
 ## Platform support
 
+> **NOTE** More platform can be provided on request and pending some support to
+> build binaries for specific architectures. If you would like to help out,
+> please let us know! See [`#8`](https://git.coopcloud.tech/decentral1se/iroh-go/issues/8)
+> and [`#9`](https://git.coopcloud.tech/decentral1se/iroh-go/issues/8) for more.
+
 * `x86_64-unknown-linux-musl`
 * `aarch64-unknown-linux-musl`
 
 ## Documentation
 
-See [`docs.rs`](https://docs.rs/iroh/1.0.0/iroh/) for the original Rust API
-documentation. The exposed Go API is 1:1. Here's the Go bindings documentation
-on [`godocs.io`](https://godocs.io/git.coopcloud.tech/decentral1se/iroh-go).
+* Original Rust API: [`docs.rs`](https://docs.rs/iroh/1.0.0/iroh/)
+* Go bindings: [`godocs.io`](https://godocs.io/git.coopcloud.tech/decentral1se/iroh-go)
+* Community bindings docs: [`docs.iroh.computer`](https://docs.iroh.computer/languages/go)
 
 ## Examples
 
@@ -70,23 +75,26 @@ in [`libs`](./libs).
 
 ## Who is using it?
 
+> **NOTE** Please add your own if you're using `iroh-go` :pray:
+
 * [`iroh-tracker`](https://git.coopcloud.tech/cblgh/iroh-tracker)
 
 ## Known issues
 
-* We need to patch the upstream `iroh-ffi` `endpoint.rs` to fix an
-  incompatibility with
+* We patched the upstream `iroh-ffi` `endpoint.rs` to fix an incompatibility
+  with
   [`uniffi-bindgen-go`](https://github.com/NordSecurity/uniffi-bindgen-go). See
   [this
   commit](https://github.com/decentral1se/iroh-ffi/commit/3e102569e1c348480416a9b05cf020760f607dfe)
   for more.
-* We need to patch the upstream `iroh-ffi` `Cargo.toml` to remove the
-  `crate-type` configuration when runnings builds here. See [this
+* We patched the upstream `iroh-ffi` `Cargo.toml` to remove the `crate-type`
+  configuration when runnings builds here. See [this
   commit](https://github.com/decentral1se/iroh-ffi/commit/207e5d7cd7dee6eab350d3aad85029431a63ca3f)
   for more.
-* Error handling is extremely inconvenient due to
-  [`iroh-ffi#263`](https://github.com/n0-computer/iroh-ffi/issues/263).
-  Proposals for improvement are very welcome.
+* Error handling is not super ergonomic due to
+  [`iroh-ffi#263`](https://github.com/n0-computer/iroh-ffi/issues/263). We have
+  created an error handling wrapper API which is documented in
+  [`./examples/errors`](./examples/errors/) to improve on the situation.
 
 ## Licenses
 
