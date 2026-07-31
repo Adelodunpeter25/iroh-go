@@ -5,7 +5,7 @@ import (
 	"fmt"
 )
 
-// As casts an error to IrohError and back, extracting relevant error message
+// `As` casts an error to IrohError and back, extracting relevant error message
 // information. It is a single argument variant of the typical errors.As API
 // because we always expect an IrohError back from the iroh FFI bindings. The
 // bindings do not return an IrohError for reasons and will not for the
@@ -17,7 +17,7 @@ func As(err error) error {
 	return err
 }
 
-// Is suports matching against the stable iroh error taxonomy using the error
+// `Is` supports matching against the stable iroh error taxonomy using the error
 // sentinel construction below. The caller must pass in a valid error sentinel
 // specified by this library, e.g. iroh.BindError.
 func (e *IrohError) Is(target error) bool {
@@ -43,12 +43,12 @@ var InvalidInputError error = sentinel{
 
 var BindError error = sentinel{
 	kind:    uint(IrohErrorKindBind),
-	message: "iroh: failure while initiating or completing an outgoing connection",
+	message: "iroh: failure while binding an endpoint",
 }
 
 var ConnectError error = sentinel{
 	kind:    uint(IrohErrorKindConnect),
-	message: "iroh: failure while initiating or completing an outgoing connectio",
+	message: "iroh: failure while initiating or completing an outgoing connection",
 }
 
 var ConnectionError error = sentinel{
@@ -73,12 +73,12 @@ var TicketParsingError error = sentinel{
 
 var RelayError error = sentinel{
 	kind:    uint(IrohErrorKindRelay),
-	message: "iroh: stream read/write/control operation failed",
+	message: "iroh: relay configuration or relay operation failed",
 }
 
 var StreamError error = sentinel{
 	kind:    uint(IrohErrorKindStream),
-	message: "iroh: datagram send/receive operation failed",
+	message: "iroh: stream read/write/control operation failed",
 }
 
 var DatagramError error = sentinel{
