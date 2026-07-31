@@ -1,11 +1,11 @@
 package main
 
 import (
+	"errors"
 	"flag"
 	"fmt"
 	"os"
 	"os/signal"
-	"strings"
 	"syscall"
 	"time"
 
@@ -17,13 +17,6 @@ var (
 	frameSize    uint32 = 256
 	endpointPeer *string
 )
-
-func check(err error) {
-	if err != nil {
-		irohErr := err.(*iroh.IrohError)
-		panic(irohErr.Message())
-	}
-}
 
 func awaitInterrupt() {
 	done := make(chan os.Signal, 1)
@@ -39,51 +32,47 @@ func parseFlags() {
 
 func receiver(e *iroh.Endpoint, id string) {
 	remote, err := iroh.EndpointIdFromString(id)
-	check(err)
+	if err := iroh.As(err); err != nil {
+		panic(err)
+	}
 
 	addr := iroh.NewEndpointAddr(remote, nil, nil)
 	conn, err := e.Connect(addr, alpn)
-	check(err)
+	if err := iroh.As(err); err != nil {
+		panic(err)
+	}
 
-	// from docs:
-	// "The peer that calls open_bi must write to its SendStream before the peer Connection is able to accept the stream
-	// using accept_bi()"
+	// from docs: "The peer that calls open_bi must write to its SendStream
+	// before the peer Connection is able to accept the stream using accept_bi()"
 	// https://docs.rs/iroh/latest/iroh/endpoint/struct.Connection.html#method.accept_bi
 	stream, err := conn.OpenBi()
-	check(err)
-	// NOTE: for the other peer to realize the bidi stream is open, you have to send some data! the data sent cannot be
-	// the empty string ""; empty string == no data
-	err = stream.Send().WriteAll([]byte{1})
+	if err := iroh.As(err); err != nil {
+		panic(err)
+	}
 
-	check(err)
+	// NOTE: for the other peer to realize the bidi stream is open, you have to
+	// send some data! the data sent cannot be the empty string ""; empty string
+	// == no data
+	err = stream.Send().WriteAll([]byte{1})
+	if err := iroh.As(err); err != nil {
+		panic(err)
+	}
+
 	handleReading(stream.Recv())
 }
 
 func handleReading(recv *iroh.RecvStream) {
 	for {
 		frame, err := recv.Read(frameSize)
-		if checkForTimeout(err) {
+		if errors.Is(err, iroh.TimeoutError) {
+			fmt.Println("lost connection")
 			break
 		}
-		fmt.Println(string(frame))
-		check(err)
-	}
-}
-
-func checkForTimeout(err error) bool {
-	// handle timeout
-	if err != nil {
-		irohErr := err.(*iroh.IrohError)
-		errMsg := irohErr.Message()
-		if strings.HasPrefix(errMsg, "ConnectionLost") {
-			fmt.Println("lost connection")
-			return true
-		} else {
-			// panics and exits bc unhandled err
-			check(err)
+		if err := iroh.As(err); err != nil {
+			panic(err)
 		}
+		fmt.Println(string(frame))
 	}
-	return false
 }
 
 func listen(e *iroh.Endpoint) {
@@ -96,20 +85,32 @@ func listen(e *iroh.Endpoint) {
 
 func handleIncoming(incoming *iroh.Incoming) {
 	accepting, err := incoming.Accept()
-	check(err)
+	if err := iroh.As(err); err != nil {
+		panic(err)
+	}
 
 	conn, err := accepting.Connect()
-	check(err)
+	if err := iroh.As(err); err != nil {
+		panic(err)
+	}
 
 	stream, err := conn.AcceptBi()
-	check(err)
+	if err := iroh.As(err); err != nil {
+		panic(err)
+	}
 
 	for {
 		err := stream.Send().WriteAll([]byte(time.Now().Format(time.DateTime)))
-		if checkForTimeout(err) {
+		if errors.Is(err, iroh.TimeoutError) {
+			fmt.Println("lost connection")
 			break
 		}
-		// prints every two seconds (not for any technical reason, 1/sec just feels hectic!)
+		if err := iroh.As(err); err != nil {
+			panic(err)
+		}
+
+		// prints every two seconds (not for any technical reason, 1/sec just feels
+		// hectic!)
 		<-time.After(2 * time.Second)
 	}
 }
@@ -124,7 +125,9 @@ func main() {
 	}
 
 	endpoint, err := iroh.EndpointBind(opts)
-	check(err)
+	if err := iroh.As(err); err != nil {
+		panic(err)
+	}
 	endpoint.Online()
 
 	if *endpointPeer == "" {

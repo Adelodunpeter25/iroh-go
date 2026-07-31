@@ -2,11 +2,11 @@ package main
 
 import (
 	"context"
+	"errors"
 	"fmt"
-	"strings"
+
 	iroh "git.coopcloud.tech/decentral1se/iroh-go"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
-
 )
 
 var (
@@ -15,16 +15,9 @@ var (
 	endpointPeer *string
 )
 
-func check(err error) {
-	if err != nil {
-		irohErr := err.(*iroh.IrohError)
-		panic(irohErr.Message())
-	}
-}
-
 // App struct
 type App struct {
-	ctx context.Context
+	ctx      context.Context
 	endpoint *iroh.Endpoint
 }
 
@@ -45,7 +38,9 @@ func (a *App) startup(ctx context.Context) {
 	}
 
 	endpoint, err := iroh.EndpointBind(opts)
-	check(err)
+	if err := iroh.As(err); err != nil {
+		panic(err)
+	}
 	endpoint.Online()
 	a.endpoint = endpoint
 
@@ -63,28 +58,32 @@ func listen(ctx context.Context, e *iroh.Endpoint) {
 	}
 }
 
-func handleIncoming (ctx context.Context, incoming *iroh.Incoming) {
+func handleIncoming(ctx context.Context, incoming *iroh.Incoming) {
 	accepting, err := incoming.Accept()
-	check(err)
+	if err := iroh.As(err); err != nil {
+		panic(err)
+	}
 
 	conn, err := accepting.Connect()
-	check(err)
+	if err := iroh.As(err); err != nil {
+		panic(err)
+	}
 
 	stream, err := conn.AcceptBi()
-	check(err)
+	if err := iroh.As(err); err != nil {
+		panic(err)
+	}
 
 	recv := stream.Recv()
 	for {
 		frame, err := recv.Read(frameSize)
-		// handle timeout
 		if err != nil {
-			irohErr := err.(*iroh.IrohError)
-			errMsg := irohErr.Message()
-			if strings.HasPrefix(errMsg, "ConnectionLost") {
+			if errors.Is(err, iroh.TimeoutError) {
 				fmt.Println("lost connection")
 				break
-			} else {
-				check(err)
+			}
+			if err := iroh.As(err); err != nil {
+				panic(err)
 			}
 		}
 		runtime.EventsEmit(ctx, "data", map[string]interface{}{

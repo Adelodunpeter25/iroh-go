@@ -1,6 +1,10 @@
 # connect-desktop
 
-A version of [`../connect`](../connect) as a desktop application. On running
+> **WARNING** Due to Wails requiring some additional system dependencies, we
+> are not testing this example regularly on CI/CD. Therefore, this example
+> might not build when you try it. Contributions are very welcome!
+
+A version of [`../connect`](../connect) as a desktop application. When running
 the desktop application, an Iroh endpoint id will be displayed. This id can be
 plugged into a terminal running the [`../connect`](../connect) example as a
 sender. What the sender types in the terminal will appear in the
@@ -8,28 +12,23 @@ connect-desktop application window.
 
 ## Dependencies
 
-* Wails v2.10.2 (old version, haven't tried on a newer yet - hopefully works there too!)
-* Vite v3.0.7
-* Go v1.18
-* npm v10.2+
-* node v20.11+
+This example has been tested on the following versions.
 
-**Getting setup**
+* Wails v2.10.2
+* Node v20.11+
 
-* Install node and golang
+Please consult the [Wails
+docs](https://wails.io/docs/gettingstarted/installation) for everything you
+need to get up and running.
 
-Install Wails:
+### Wails
 
 ```
-go install github.com/wailsapp/wails/v2/cmd/wails@v2.10.2 // for tested version
-// OR: go install github.com/wailsapp/wails/v2/cmd/wails@latest // for latest
-
-// then install frontend dependency
-cd frontend 
-npm i
+go install github.com/wailsapp/wails/v2/cmd/wails@v2.10.2
+cd frontend && npm i
 ```
 
-## Running in development mode
+## Development mode
 
 ```
 wails dev

@@ -1,5 +1,7 @@
 # `iroh-go`
 
+[![Build Status](https://build.coopcloud.tech/api/badges/decentral1se/iroh-go/status.svg?ref=refs/heads/main)](https://build.coopcloud.tech/decentral1se/iroh-go)
+
 > **WARNING** Highly Experimental ™️
 
 Go FFI bindings for [`iroh`](https://iroh.computer) via
