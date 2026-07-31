@@ -19,6 +19,11 @@ static binary with `go build` or [with
 Zig](https://dev.to/kristoff/zig-makes-go-cross-compilation-just-work-29ho).
 `iroh-go` does require `CGO_ENABLED=1`.
 
+## Version support
+
+* `iroh`: [`v1.0.3`](https://github.com/n0-computer/iroh/releases/tag/v1.0.3)
+* `iroh-ffi`: [`v1.1.0`](https://github.com/n0-computer/iroh-ffi/releases/tag/v1.1.0)
+
 ## Platform support
 
 > **NOTE** More platform can be provided on request and pending some support to
