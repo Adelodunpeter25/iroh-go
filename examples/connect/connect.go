@@ -2,11 +2,11 @@ package main
 
 import (
 	"bufio"
+	"errors"
 	"flag"
 	"fmt"
 	"os"
 	"os/signal"
-	"strings"
 	"syscall"
 
 	iroh "git.coopcloud.tech/decentral1se/iroh-go"
@@ -17,13 +17,6 @@ var (
 	frameSize    uint32 = 256
 	endpointPeer *string
 )
-
-func check(err error) {
-	if err != nil {
-		irohErr := err.(*iroh.IrohError)
-		panic(irohErr.Message())
-	}
-}
 
 func awaitInterrupt() {
 	done := make(chan os.Signal, 1)
@@ -39,22 +32,30 @@ func parseFlags() {
 
 func send(e *iroh.Endpoint, id string) {
 	remote, err := iroh.EndpointIdFromString(id)
-	check(err)
+	if err := iroh.As(err); err != nil {
+		panic(err)
+	}
 
 	addr := iroh.NewEndpointAddr(remote, nil, nil)
 	conn, err := e.Connect(addr, alpn)
-	check(err)
+	if err := iroh.As(err); err != nil {
+		panic(err)
+	}
 
 	stream, err := conn.OpenBi()
-	check(err)
+	if err := iroh.As(err); err != nil {
+		panic(err)
+	}
 
-	fmt.Println("connected")
+	fmt.Println("connection established")
 
 	scanner := bufio.NewScanner(os.Stdin)
 	for scanner.Scan() {
 		if line := scanner.Text(); line != "" {
 			err = stream.Send().WriteAll([]byte(line))
-			check(err)
+			if err := iroh.As(err); err != nil {
+				panic(err)
+			}
 		}
 	}
 
@@ -72,26 +73,30 @@ func listen(e *iroh.Endpoint) {
 
 func handleIncoming(incoming *iroh.Incoming) {
 	accepting, err := incoming.Accept()
-	check(err)
+	if err := iroh.As(err); err != nil {
+		panic(err)
+	}
 
 	conn, err := accepting.Connect()
-	check(err)
+	if err := iroh.As(err); err != nil {
+		panic(err)
+	}
 
 	stream, err := conn.AcceptBi()
-	check(err)
+	if err := iroh.As(err); err != nil {
+		panic(err)
+	}
 
 	recv := stream.Recv()
 	for {
 		frame, err := recv.Read(frameSize)
-		// handle timeout
 		if err != nil {
-			irohErr := err.(*iroh.IrohError)
-			errMsg := irohErr.Message()
-			if strings.HasPrefix(errMsg, "ConnectionLost") {
+			if errors.Is(err, iroh.TimeoutError) {
 				fmt.Println("lost connection")
 				break
-			} else {
-				check(err)
+			}
+			if err := iroh.As(err); err != nil {
+				panic(err)
 			}
 		}
 		fmt.Println(string(frame))
@@ -108,7 +113,10 @@ func main() {
 	}
 
 	endpoint, err := iroh.EndpointBind(opts)
-	check(err)
+	if err := iroh.As(err); err != nil {
+		panic(err)
+	}
+
 	endpoint.Online()
 
 	if *endpointPeer == "" {

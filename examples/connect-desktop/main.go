@@ -16,7 +16,7 @@ func main() {
 	app := NewApp()
 
 	// Create application with options
-	err := wails.Run(&options.App{
+	if err := wails.Run(&options.App{
 		Title:  "go-iroh-desktop-example",
 		Width:  1024,
 		Height: 768,
@@ -28,9 +28,7 @@ func main() {
 		Bind: []interface{}{
 			app,
 		},
-	})
-
-	if err != nil {
-		println("Error:", err.Error())
+	}); err != nil {
+		panic(err)
 	}
 }

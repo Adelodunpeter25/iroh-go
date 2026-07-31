@@ -15,23 +15,19 @@ func main() {
 
 	endpoint, err := iroh.EndpointBind(opts)
 
-	// BEGIN API PREVIEW ZONE
-
-	// 1. convert error to IrohError with As
-	//    bring IrohError.Message/DebugMessage back
-	//    maintain `err != nil` compatibility
+	// NOTE(d1): The main route: convert errors to IrohError with `iroh.As`. This
+	// brings the `IrohError.Message`/`DebugMessage` back in a regular error
+	// value. This ensures we maintain `err != nil` compatibility
 	if err := iroh.As(err); err != nil {
 		panic(err)
 	}
 
-	// 1. no As machinery required
-	//    sentinel check with errors.Is support
-	//    works like usual `err`
+	// NOTE(d1): If you need more fine grained error catching: no `iroh.As`
+	// machinery is required. Sentinel checks with the usual `errors.Is` API are
+	// supported. It works as expected with `err` values
 	if err != nil && errors.Is(err, iroh.BindError) {
 		panic(err)
 	}
-
-	// END API PREVIEW ZONE
 
 	endpoint.Online()
 }

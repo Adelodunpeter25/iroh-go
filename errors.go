@@ -12,14 +12,14 @@ import (
 // forseeable future due to API stability guarantees.
 func As(err error) error {
 	if err, ok := errors.AsType[IrohError](err); ok {
-		return errors.New(fmt.Sprintf("%s: %s", err.Message(), err.DebugMessage()))
+		return fmt.Errorf("%s: %s", err.Message(), err.DebugMessage())
 	}
 	return err
 }
 
-// `Is` supports matching against the stable iroh error taxonomy using the error
-// sentinel construction below. The caller must pass in a valid error sentinel
-// specified by this library, e.g. iroh.BindError.
+// `Is` supports matching against the stable iroh error taxonomy using the
+// error sentinel construction below. The caller must pass in a valid error
+// sentinel specified by this library, e.g. iroh.BindError.
 func (e *IrohError) Is(target error) bool {
 	if err, ok := errors.AsType[sentinel](target); ok {
 		return uint(e.Kind()) == err.kind
@@ -33,6 +33,10 @@ type sentinel struct {
 }
 
 func (s sentinel) Error() string {
+	return s.message
+}
+
+func (s sentinel) String() string {
 	return s.message
 }
 
