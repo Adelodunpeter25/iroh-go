@@ -46,9 +46,9 @@ See [`examples`](./examples).
 
 ## Run your own `iroh-relay`
 
-See [`iroh-relay`](https://git.coopcloud.tech/decentral1se/iroh-relay) if you
-want more small footprint static binary goodness. You can also make use of the
-upstream provided docker image: `n0computer/iroh-relay`.
+Each [`iroh` release](https://github.com/n0-computer/iroh/releases) features a
+relay binary. You can also make use of the upstream provided docker image:
+`n0computer/iroh-relay`.
 
 ### Local hacking
 
