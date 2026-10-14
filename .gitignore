@@ -1,4 +1,5 @@
 .*.sw[a-z]
+examples/allowlist/allowlist
 examples/connect-desktop/build
 examples/connect-desktop/frontend/dist
 examples/connect-desktop/frontend/wailsjs
@@ -6,5 +7,4 @@ examples/connect/connect
 examples/errors/errors
 examples/pairchat/pairchat
 examples/timeserve/timeserve
-examples/allowlist/allowlist
 iroh-go/target/
