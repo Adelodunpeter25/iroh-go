@@ -105,3 +105,9 @@ in [`libs`](./libs).
 
 Apache 2.0 & MIT, following the upstream licensing choices in
 [`iroh-ffi`](https://github.com/n0-computer/iroh-ffi).
+
+## LLM Policy
+
+We adopt the [Strict No LLM / No AI
+Policy](https://ziglang.org/code-of-conduct/#strict-no-llm-no-ai-policy) of
+[Zig](https://ziglang.org).
