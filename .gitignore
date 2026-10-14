@@ -6,4 +6,5 @@ examples/connect/connect
 examples/errors/errors
 examples/pairchat/pairchat
 examples/timeserve/timeserve
+examples/allowlist/allowlist
 iroh-go/target/
