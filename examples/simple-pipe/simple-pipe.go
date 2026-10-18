@@ -19,12 +19,13 @@ var (
 	frameSize    uint32 = 256
 	endpointPeer *string
 	verboseFlag  *bool
-	staticFlag   *string
+	secretFlag   *string
 )
 
 type SimplePipe struct {
 	recv *iroh.RecvStream
 	send *iroh.SendStream
+	totalBytesRead int
 }
 
 func (sp *SimplePipe) setRecv(recv *iroh.RecvStream) {
@@ -66,10 +67,18 @@ func (sp *SimplePipe) setSend(send *iroh.SendStream) {
 /// Implementations must not retain buf.
 func (sp *SimplePipe) Read(buf []byte) (int, error) {
 	retbuf, err := sp.recv.Read(uint32(len(buf)))
+	if err != nil {
+		return len(retbuf), err
+	}
+	sp.totalBytesRead += len(retbuf)
+	// fmt.Println("retbuf", retbuf, "len(retbuf)", len(retbuf), "err", err)
+	// signal end of file
+	if sp.totalBytesRead >  0 && len(retbuf) == 0 {
+		return 0, io.EOF
+	}
 	for i, d := range retbuf {
 		buf[i] = d
 	}
-	// TODO (2026-10-16): return io.EOF when suitable; may need extra state in SimplePipe to properly know when to call EOF
 	return len(retbuf), err
 }
 
@@ -102,7 +111,7 @@ func awaitInterrupt() {
 func parseFlags() {
 	endpointPeer = flag.String("endpoint", "", "endpoint id of peer")
 	verboseFlag = flag.Bool("v", false, "include logging from program")
-	staticFlag = flag.String("static", "", "provide a string to use to derive the endpoint's keypair")
+	secretFlag = flag.String("secret", "", "provide a string to use to derive the endpoint's keypair")
 	flag.Parse()
 }
 
@@ -142,7 +151,13 @@ func send(e *iroh.Endpoint, id string, sp *SimplePipe) {
 	if err = iroh.As(err); err != nil {
 		panic(err)
 	}
+	// mark send stream as done
+	stream.Send().Finish()
+	exit(conn)
 
+}
+
+func exit(conn *iroh.Connection) {
 	// wait a bit to cleanly exit
 	time.Sleep(1 * time.Second)
 	// send an event to the done channel to stop this process via awaitInterrupt
@@ -150,10 +165,8 @@ func send(e *iroh.Endpoint, id string, sp *SimplePipe) {
 }
 
 func listen(e *iroh.Endpoint, sp *SimplePipe) {
-	for {
-		incoming := *e.AcceptNext()
-		go handleIncoming(incoming, sp)
-	}
+	incoming := *e.AcceptNext()
+	handleIncoming(incoming, sp)
 }
 
 func handleIncoming(incoming *iroh.Incoming, sp *SimplePipe) {
@@ -173,18 +186,15 @@ func handleIncoming(incoming *iroh.Incoming, sp *SimplePipe) {
 	}
 
 	sp.setRecv(stream.Recv())
-	for {
-		n, err := io.Copy(os.Stdout, sp)
-		log(fmt.Sprintf("read n %d", n))
-		if errors.Is(err, iroh.TimeoutError) ||
-			errors.Is(err, iroh.StreamError) {
-			log("lost connection")
-			break
-		}
-		if err := iroh.As(err); err != nil {
-			panic(err)
-		}
+	n, err := io.Copy(os.Stdout, sp)
+	log(fmt.Sprintf("read n %d", n))
+	if errors.Is(err, iroh.TimeoutError) ||
+		errors.Is(err, iroh.StreamError) {
+		log("lost connection")
+	} else if err = iroh.As(err); err != nil {
+		panic(err)
 	}
+	exit(conn)
 }
 
 func main() {
@@ -197,9 +207,9 @@ func main() {
 		Alpns:  &[][]byte{alpn},
 	}
 
-	// if --static: use the input, and sha256 hash it to derive a keypair
-	if *staticFlag != "" {
-		digest := sha256.Sum256([]byte(*staticFlag))
+	// if --secret: use the input, and sha256 hash it to derive a keypair
+	if *secretFlag != "" {
+		digest := sha256.Sum256([]byte(*secretFlag))
 		secret := digest[:]
 		opts.SecretKey = &secret
 	}

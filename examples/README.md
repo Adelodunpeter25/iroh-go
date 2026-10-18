@@ -17,6 +17,6 @@ same between runs (static iroh public keypair) and how to interact with iroh's
 [`pairchat`](./pairchat) demonstrates how to setup a pairwise connection where both parties can
 read and receive data sent over an iroh connection.
 
-[`simple-pipe`](./simple-pipe) program that sets up a bidirectional pipe that sends simple bytes across iroh. Can be used à la netcat to send files over iroh.
+[`simple-pipe`](./simple-pipe) program that sets up a directional pipe that can be used à la netcat to send files over iroh.
 
 [tickets]: https://docs.iroh.computer/connect-two-endpoints#what-is-a-ticket
