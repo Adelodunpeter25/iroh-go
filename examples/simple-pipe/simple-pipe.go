@@ -36,8 +36,8 @@ func (sp *SimplePipe) setSend(send *iroh.SendStream) {
 	sp.send = send
 }
 
-/* inlining go's docs for io.Reader and io.Writer. i'm not sure i'm entirely fulfilling the implementation
-* contract right now but it also works in my smol tests :)*/
+/* inlining go's docs for io.Reader and io.Writer in case of any other future bugs with my implementations of the
+* interface contract */
 
 /// Read reads up to len(buf) bytes into buf. It returns the number of bytes read (0 <=
 /// n <= len(buf)) and any error encountered.
@@ -66,19 +66,33 @@ func (sp *SimplePipe) setSend(send *iroh.SendStream) {
 ///
 /// Implementations must not retain buf.
 func (sp *SimplePipe) Read(buf []byte) (int, error) {
-	retbuf, err := sp.recv.Read(uint32(len(buf)))
-	if err != nil {
-		return len(retbuf), err
+	// fmt.Println("READ size of buf", len(buf))
+	if len(buf) == 0 {
+		return 0, nil
 	}
-	sp.totalBytesRead += len(retbuf)
+
+	retbuf, err := sp.recv.Read(uint32(len(buf)))
+
 	// fmt.Println("retbuf", retbuf, "len(retbuf)", len(retbuf), "err", err)
+
 	// signal end of file
-	if sp.totalBytesRead >  0 && len(retbuf) == 0 {
+	if sp.totalBytesRead > 0 && len(retbuf) == 0 {
 		return 0, io.EOF
 	}
-	for i, d := range retbuf {
-		buf[i] = d
+
+	sp.totalBytesRead += len(retbuf)
+
+	copyBytes := func() {
+		for i, d := range retbuf {
+			buf[i] = d
+		}
 	}
+
+	if err != nil {
+		copyBytes()
+		return len(retbuf), err
+	}
+	copyBytes()
 	return len(retbuf), err
 }
 
@@ -88,8 +102,14 @@ func (sp *SimplePipe) Read(buf []byte) (int, error) {
 ///
 /// Implementations must not retain buf.
 func (sp *SimplePipe) Write(buf []byte) (int, error) {
+	// fmt.Println("WRITE size of buf", len(buf))
 	n64, err := sp.send.Write(buf)
 	n := int(n64)
+
+	if n < len(buf) {
+		return n, errors.New("SimplePipe.Write exited before writing all bytes")
+	}
+
 	return n, err
 }
 
