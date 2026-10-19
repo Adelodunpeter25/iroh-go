@@ -36,9 +36,9 @@ func (sp *SimplePipe) setSend(send *iroh.SendStream) {
 	sp.send = send
 }
 
-/* inlining go's docs for io.Reader and io.Writer in case of any other future bugs with my implementations of the
-* interface contract */
-
+// (NOTE): cblgh: inlining go's docs for io.Reader and io.Writer in case of any
+// other future bugs with my implementations of the interface contract
+//
 // Read reads up to len(buf) bytes into buf. It returns the number of bytes read (0 <=
 // n <= len(buf)) and any error encountered.
 //
@@ -96,9 +96,11 @@ func (sp *SimplePipe) Read(buf []byte) (int, error) {
 	return len(retbuf), err
 }
 
-// Write writes len(buf) bytes from buf to the underlying data stream.
-// It returns the number of bytes written from buf (0 <= n <= len(buf)) and any error encountered that caused the write to stop early.
-// Write must return a non-nil error if it returns n < len(buf). Write must not modify the slice data, even temporarily.
+// Write writes len(buf) bytes from buf to the underlying data stream. It
+// returns the number of bytes written from buf (0 <= n <= len(buf)) and any
+// error encountered that caused the write to stop early. Write must return a
+// non-nil error if it returns n < len(buf). Write must not modify the slice
+// data, even temporarily.
 //
 // Implementations must not retain buf.
 func (sp *SimplePipe) Write(buf []byte) (int, error) {
