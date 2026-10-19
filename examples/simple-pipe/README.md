@@ -1,6 +1,7 @@
 # simple-pipe
 
-How to set up a simple directional byte stream that reads (receiver) / writes (sender) over an iroh connection.
+How to set up a simple directional byte stream that reads (receiver) / writes
+(sender) over an iroh connection.
 
 ## Build a binary
 
@@ -20,8 +21,10 @@ go build -v -a -ldflags '-extldflags "-static"' ./simple-pipe.go
 
 Options: 
 
-* `-secret <string>` uses the provided string to derive a secret keypair (will be the same each run)
-* `-v` print program logs, sharing program state. Use this as a receiver to get out the endpoint id
+* `-secret <string>` uses the provided string to derive a secret keypair (will
+  be the same each run).
+* `-v` print program logs, sharing program state. Use this as a receiver to get
+  out the endpoint id.
 * `-endpoint <endpoint-id>` used as a sender to connect to the receiver
 
 ## Terminal 1 (receiver)

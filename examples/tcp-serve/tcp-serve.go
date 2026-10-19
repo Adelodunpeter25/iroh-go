@@ -1,18 +1,19 @@
 package main
 
 import (
+	"context"
 	"crypto/sha256"
 	"errors"
-	"net"
-	"context"
-	"net/http"
 	"fmt"
-	"gomod.cblgh.org/cerca/util/eout"
 	"io"
+	"net"
+	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
+
+	"gomod.cblgh.org/cerca/util/eout"
 
 	iroh "git.coopcloud.tech/decentral1se/iroh-go"
 )
@@ -35,32 +36,32 @@ func (sp *SimplePipe) setSend(send *iroh.SendStream) {
 	sp.send = send
 }
 
-/// Read reads up to len(buf) bytes into buf. It returns the number of bytes read (0 <=
-/// n <= len(buf)) and any error encountered.
-///
-/// Even if Read returns n < len(buf), it may use all of buf as scratch space during the
-/// call. If some data is available but not len(buf) bytes, Read conventionally returns
-/// what is available instead of waiting for more.
-///
-/// When Read encounters an error or end-of-file condition after successfully
-/// reading n > 0 bytes, it returns the number of bytes read. It may return the
-/// (non-nil) error from the same call or return the error (and n == 0) from a
-/// subsequent call . An instance of this general case is that a Reader returning a
-/// non-zero number of bytes at the end of the input stream may return either
-/// err == EOF or err == nil.  The next Read should return 0, EOF.
-///
-/// Callers should always process the n > 0 bytes returned before considering the
-/// error err. Doing so correctly handles I/O errors that happen after reading some
-/// bytes and also both of the allowed EOF behaviors.
-///
-/// If len(buf) == 0, Read should always return n == 0. It may return a non-nil error
-/// if some error condition is known, such as EOF.
-///
-/// Implementations of Read are discouraged from returning a zero byte count with a
-/// nil error, except when len(buf) == 0. Callers should treat a return of 0 and nil a
-/// s indicating that nothing happened; in particular it does not indicate EOF.
-///
-/// Implementations must not retain buf.
+// Read reads up to len(buf) bytes into buf. It returns the number of bytes read (0 <=
+// n <= len(buf)) and any error encountered.
+//
+// Even if Read returns n < len(buf), it may use all of buf as scratch space during the
+// call. If some data is available but not len(buf) bytes, Read conventionally returns
+// what is available instead of waiting for more.
+//
+// When Read encounters an error or end-of-file condition after successfully
+// reading n > 0 bytes, it returns the number of bytes read. It may return the
+// (non-nil) error from the same call or return the error (and n == 0) from a
+// subsequent call . An instance of this general case is that a Reader returning a
+// non-zero number of bytes at the end of the input stream may return either
+// err == EOF or err == nil.  The next Read should return 0, EOF.
+//
+// Callers should always process the n > 0 bytes returned before considering the
+// error err. Doing so correctly handles I/O errors that happen after reading some
+// bytes and also both of the allowed EOF behaviors.
+//
+// If len(buf) == 0, Read should always return n == 0. It may return a non-nil error
+// if some error condition is known, such as EOF.
+//
+// Implementations of Read are discouraged from returning a zero byte count with a
+// nil error, except when len(buf) == 0. Callers should treat a return of 0 and nil a
+// s indicating that nothing happened; in particular it does not indicate EOF.
+//
+// Implementations must not retain buf.
 func (sp *SimplePipe) Read(buf []byte) (int, error) {
 	// fmt.Println("READ size of buf", len(buf))
 	if len(buf) == 0 {
@@ -92,11 +93,11 @@ func (sp *SimplePipe) Read(buf []byte) (int, error) {
 	return len(retbuf), err
 }
 
-/// Write writes len(buf) bytes from buf to the underlying data stream.
-/// It returns the number of bytes written from buf (0 <= n <= len(buf)) and any error encountered that caused the write to stop early.
-/// Write must return a non-nil error if it returns n < len(buf). Write must not modify the slice data, even temporarily.
-///
-/// Implementations must not retain buf.
+// Write writes len(buf) bytes from buf to the underlying data stream.
+// It returns the number of bytes written from buf (0 <= n <= len(buf)) and any error encountered that caused the write to stop early.
+// Write must return a non-nil error if it returns n < len(buf). Write must not modify the slice data, even temporarily.
+//
+// Implementations must not retain buf.
 func (sp *SimplePipe) Write(buf []byte) (int, error) {
 	// fmt.Println("WRITE size of buf", len(buf))
 	n64, err := sp.send.Write(buf)
