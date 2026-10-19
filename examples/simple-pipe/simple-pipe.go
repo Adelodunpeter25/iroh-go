@@ -223,7 +223,7 @@ func main() {
 
 	if *endpointPeer == "" {
 		log("this endpoint is online and listening! use this id to connect via a peer:")
-		log(fmt.Sprintf("simple-pipe -endpoint %s\n", endpoint.Id()))
+		os.Stderr.Write([]byte(fmt.Sprintf("simple-pipe -endpoint %s\n", endpoint.Id())))
 		go func() { listen(endpoint, &sp) }()
 	} else {
 		go func() { send(endpoint, *endpointPeer, &sp) }()
