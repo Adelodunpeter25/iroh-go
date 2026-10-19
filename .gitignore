@@ -7,4 +7,5 @@ examples/connect/connect
 examples/errors/errors
 examples/pairchat/pairchat
 examples/timeserve/timeserve
+examples/tcp-serve/tcp-serve
 iroh-go/target/
