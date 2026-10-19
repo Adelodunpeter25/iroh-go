@@ -6,6 +6,7 @@ examples/connect-desktop/frontend/wailsjs
 examples/connect/connect
 examples/errors/errors
 examples/pairchat/pairchat
-examples/timeserve/timeserve
 examples/simple-pipe/simple-pipe
+examples/tcp-serve/tcp-serve
+examples/timeserve/timeserve
 iroh-go/target/
