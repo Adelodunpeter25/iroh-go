@@ -18,7 +18,7 @@ that leverages iroh's functionality.
   where both parties can read and receive data sent over an iroh connection.
 * [`simple-pipe`](./simple-pipe) program that sets up a directional pipe that
   can be used à la netcat to send files over iroh.
-* [`tcp-serve`](./tcp-servce) memonstrates how to set up a simple HTTP echo
+* [`tcp-serve`](./tcp-servce) demonstrates how to set up a simple HTTP echo
   server that is served only* over iroh.
 
 [tickets]: https://docs.iroh.computer/connect-two-endpoints#what-is-a-ticket
