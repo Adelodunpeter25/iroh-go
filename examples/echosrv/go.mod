@@ -1,4 +1,4 @@
-module git.coopcloud.tech/decentral1se/iroh-go/examples/tcp-serve
+module git.coopcloud.tech/decentral1se/iroh-go/examples/echosrv
 
 go 1.26.1
 

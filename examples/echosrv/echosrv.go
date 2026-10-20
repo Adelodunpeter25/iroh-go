@@ -6,12 +6,12 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"flag"
 	"net"
 	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
-	"time"
 
 	"gomod.cblgh.org/cerca/util/eout"
 
@@ -19,7 +19,7 @@ import (
 )
 
 var (
-	alpn = []byte("iroh-go-tcp-serve/0")
+	alpn = []byte("iroh-go-echosrv/0")
 )
 
 type SimplePipe struct {
@@ -120,28 +120,23 @@ func awaitInterrupt() {
 	os.Exit(0)
 }
 
+var PORT int
+var verbose bool
 func log(s string) {
-	if true {
+	if verbose {
 		fmt.Println(s)
 	}
 }
 
-func exit() {
-	// wait a bit to cleanly exit
-	time.Sleep(1 * time.Second)
-	// send an event to the done channel to stop this process via awaitInterrupt
-	done <- os.Interrupt
-}
-
-type IrohTCP struct {
+type EchoSrv struct {
 	LocalListener net.Listener
 	Endpoint      *iroh.Endpoint
 }
 
-const PORT = 9899
 
-func newIrohTCP() *IrohTCP {
-	var t IrohTCP
+// create an iroh endpoint
+func newEchoSrv() *EchoSrv {
+	var t EchoSrv
 
 	preset := iroh.PresetN0()
 	opts := iroh.EndpointOptions{
@@ -150,7 +145,7 @@ func newIrohTCP() *IrohTCP {
 	}
 
 	// NOTE (2026-10-19): static endpoint key being set
-	digest := sha256.Sum256([]byte("tcp-serve"))
+	digest := sha256.Sum256([]byte("echosrv"))
 	secret := digest[:]
 	opts.SecretKey = &secret
 
@@ -171,86 +166,77 @@ func newIrohTCP() *IrohTCP {
 	return &t
 }
 
-var tcphost = fmt.Sprintf(":%d", PORT)
+func getHost () string {
+	return fmt.Sprintf(":%d", PORT)
+}
 
-func (t *IrohTCP) Listen(ctx context.Context) {
+func (t *EchoSrv) Start(ctx context.Context) {
+	tcphost := getHost()
 	var err error
 	log(fmt.Sprintf("setting up local listener on %s", tcphost))
 	t.LocalListener, err = net.Listen("tcp", tcphost)
 	eout.Check(err, "set up local listener")
 
-	// NOTE (2026-10-19): prototype implementation only handles a single request rn
-	go t.handleIncoming()
+	go t.handleIncoming(tcphost)
 }
 
-func (t *IrohTCP) handleIncoming() {
-	incoming := t.Endpoint.AcceptNext()
-	fmt.Println("incoming")
-	accepting, err := (*incoming).Accept()
-	if err := iroh.As(err); err != nil {
-		eout.Check(err, "incoming.Accept")
+func (t *EchoSrv) handleIncoming(tcphost string) {
+	for {
+		incoming := t.Endpoint.AcceptNext()
+		log("incoming")
+		accepting, err := (*incoming).Accept()
+		if err := iroh.As(err); err != nil {
+			eout.Check(err, "incoming.Accept")
+		}
+		log("accepted")
+		conn, err := accepting.Connect()
+		if err := iroh.As(err); err != nil {
+			eout.Check(err, "incoming.Connect")
+		}
+		log("connected")
+		stream, err := conn.AcceptBi()
+		if err := iroh.As(err); err != nil {
+			eout.Check(err, "incoming.AcceptBi")
+			panic(err)
+		}
+		log("bidi stream")
+
+		recv := stream.Recv()
+		send := stream.Send()
+
+		var sp SimplePipe
+		sp.setRecv(recv)
+		sp.setSend(send)
+
+		log("pre dial")
+		dialedConn, err := net.Dial("tcp", tcphost)
+		go io.Copy(dialedConn, &sp)
+		go io.Copy(&sp, dialedConn)
+		log("post dial")
 	}
-	fmt.Println("accepted")
-	conn, err := accepting.Connect()
-	if err := iroh.As(err); err != nil {
-		eout.Check(err, "incoming.Connect")
-	}
-	fmt.Println("connected")
-	stream, err := conn.AcceptBi()
-	if err := iroh.As(err); err != nil {
-		eout.Check(err, "incoming.AcceptBi")
-		panic(err)
-	}
-	fmt.Println("bidi stream")
-
-	recv := stream.Recv()
-	send := stream.Send()
-
-	var sp SimplePipe
-	sp.setRecv(recv)
-	sp.setSend(send)
-
-	fmt.Println("pre dial")
-	dialedConn, err := net.Dial("tcp", tcphost)
-	go io.Copy(dialedConn, &sp)
-	go io.Copy(&sp, dialedConn)
-	fmt.Println("post dial")
 }
 
-func (t *IrohTCP) Accept() (net.Conn, error) {
-	return t.LocalListener.Accept()
-}
-
-// can return self because we implement net.Addr (Network() + String())
-func (t *IrohTCP) Addr() net.Addr {
-	return t
-}
-
-func (t *IrohTCP) Network() string {
-	return "tcp"
-}
-
-func (t *IrohTCP) String() string {
-	return fmt.Sprintf("%s", t.Endpoint.Id())
-}
-
-func (t *IrohTCP) Close() error {
-	return fmt.Errorf("TODO Close() :)")
+func parseFlags() {
+	flag.BoolVar(&verbose, "v", false, "output more log messages")
+	flag.IntVar(&PORT, "p", 9899, "port for net.Listener to run on")
+	flag.Parse()
 }
 
 func main() {
-	tcpServe := newIrohTCP()
-
+	parseFlags()
+	tcpServe := newEchoSrv()
+	// NOTE (2026-10-20): a critical improvement (probably for a solution that actually implements net.Conn, net.Dial etc) is for
+	// there to be a way to access the endpoint id of the remote sending the request
 	http.HandleFunc("/", func(res http.ResponseWriter, req *http.Request) {
-		fmt.Println("received req")
+		log("received req")
 		body, err := io.ReadAll(req.Body)
 		eout.Check(err, "read body")
-		fmt.Printf("data %q\n", string(body))
+		log(fmt.Sprintf("data %q\n", string(body)))
 		res.Write(body)
 	})
-	tcpServe.Listen(context.Background())
+	tcpServe.Start(context.Background())
 	fmt.Println("started iroh http server")
-	err := http.Serve(tcpServe, nil)
+	err := http.Serve(tcpServe.LocalListener, nil)
 	eout.Check(err, "http.Serve(tcpServe)")
 	awaitInterrupt()
 }
