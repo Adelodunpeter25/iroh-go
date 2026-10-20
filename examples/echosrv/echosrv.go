@@ -210,6 +210,7 @@ func (t *EchoSrv) handleIncoming(tcphost string) {
 
 		log("pre dial")
 		dialedConn, err := net.Dial("tcp", tcphost)
+		eout.Check(err, "net.dial")
 		go io.Copy(dialedConn, &sp)
 		go io.Copy(&sp, dialedConn)
 		log("post dial")
