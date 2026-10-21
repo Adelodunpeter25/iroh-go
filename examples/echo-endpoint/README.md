@@ -1,16 +1,23 @@
 # echo-endpoint
 
-Demonstrates how to set up a simple HTTP echo server that is served only* over iroh.
+Demonstrates how to set up a simple HTTP echo server that is served only* over
+iroh.
 
-This example is more complex than `echosrv`. It ties the incoming endpoint ID to the HTTP
-request that is handled by the http server. In effect, the underlying http server can gate
-resources and responses depending on which iroh keypair is connecting and sending requests.
+This example is more complex than `echosrv`. It ties the incoming endpoint ID
+to the HTTP request that is handled by the HTTP server. In effect, the
+underlying HTTP server can gate resources and responses depending on which Iroh
+keypair is connecting and sending requests.
 
-To run this example, you will need to use [cURL](https://curl.se/) (a multitool of a program for anything HTTP) and also download Number0's program [`dumbpipe`](https://www.dumbpipe.dev/) (Iroh forwarding tool). For dumbpipe binaries as of 2026-10, see [n0-computer/dumbpipe/releases](https://github.com/n0-computer/dumbpipe/releases).
+To run this example, you will need to use [cURL](https://curl.se) (a multitool
+of a program for anything HTTP) and also download Number0's program
+[`dumbpipe`](https://www.dumbpipe.dev) (Iroh forwarding tool). For dumbpipe
+binaries as of 2026-10, see
+[`n0-computer/dumbpipe/releases`](https://github.com/n0-computer/dumbpipe/releases).
 
-We will use dumbpipe together with cURL to achieve sending http client traffic over Iroh to our Iroh-available HTTP server.
+We will use `dumbpipe` together with `cURL` to achieve sending http client
+traffic over Iroh to our Iroh-available HTTP server.
 
-\* *technically, the http server is also available locally on the opened port*
+\* *technically, the HTTP server is also available locally on the opened port*
 
 ## Build a binary
 
@@ -65,8 +72,8 @@ used in Terminal 2.
 ```
 curl 127.0.0.1:8099/  --data "hello"
 ```
-You should see the string "hello" echoed back out to you, prefixed with the public key of the
-iroh endpoint establishing the connection in Terminal 2. 
+You should see the string "hello" echoed back out to you, prefixed with the
+public key of the iroh endpoint establishing the connection in Terminal 2. 
 
-If you restart the process running in Terminal 2, you should see a different key being
-returned as the prefix in the echo server's response.
+If you restart the process running in Terminal 2, you should see a different
+key being returned as the prefix in the echo server's response.

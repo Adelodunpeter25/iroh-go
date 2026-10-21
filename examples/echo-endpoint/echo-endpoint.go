@@ -3,15 +3,15 @@ package main
 import (
 	"context"
 	"crypto/sha256"
-	"sync"
 	"errors"
+	"flag"
 	"fmt"
 	"io"
-	"flag"
 	"net"
 	"net/http"
 	"os"
 	"os/signal"
+	"sync"
 	"syscall"
 
 	"gomod.cblgh.org/cerca/util/eout"
@@ -20,7 +20,7 @@ import (
 )
 
 var (
-	alpn = []byte("iroh-go-echo-endpoint/0")
+	alpn  = []byte("iroh-go-echo-endpoint/0")
 	conns sync.Map
 )
 
@@ -87,6 +87,7 @@ func awaitInterrupt() {
 
 var PORT int
 var verbose bool
+
 func log(s string) {
 	if verbose {
 		fmt.Println(s)
@@ -96,9 +97,8 @@ func log(s string) {
 type ITCP struct {
 	LocalListener net.Listener
 	Endpoint      *iroh.Endpoint
-	ch chan string
+	ch            chan string
 }
-
 
 // create an iroh endpoint
 func newITCP() *ITCP {
@@ -133,7 +133,7 @@ func newITCP() *ITCP {
 	return &t
 }
 
-func getHost () string {
+func getHost() string {
 	return fmt.Sprintf(":%d", PORT)
 }
 
@@ -151,7 +151,7 @@ func (t *ITCP) Start(ctx context.Context) {
 func (t *ITCP) Accept() (net.Conn, error) {
 	c, err := t.LocalListener.Accept()
 	// receive endpoint id from t.handleIncoming goroutine
-	endpointId := <- t.ch
+	endpointId := <-t.ch
 	conns.Store(c, endpointId)
 	return c, err
 }
@@ -161,11 +161,11 @@ func (t *ITCP) Close() error {
 	// TODO (2026-10-21)
 	return t.LocalListener.Close()
 }
-// implements net.Listener
-func (t *ITCP) Addr() net.Addr { 
-	return t.LocalListener.Addr() 
-}
 
+// implements net.Listener
+func (t *ITCP) Addr() net.Addr {
+	return t.LocalListener.Addr()
+}
 
 func (t *ITCP) handleIncoming(tcphost string) {
 	for {
@@ -189,7 +189,7 @@ func (t *ITCP) handleIncoming(tcphost string) {
 		log("bidi stream")
 
 		// send endpoint public key to be received by accept handler
-		go func (endpointId string) {
+		go func(endpointId string) {
 			t.ch <- endpointId
 		}(conn.RemoteId().String())
 
@@ -240,7 +240,7 @@ func main() {
 		Addr: getHost(),
 		// provide an extra key `endpointId` to all incoming http.Request's such that each handler can access the key
 		// for a request as `req.Context().Value('endpointId')`
-		ConnContext: func (ctx context.Context, c net.Conn) context.Context {
+		ConnContext: func(ctx context.Context, c net.Conn) context.Context {
 			var s string
 			// sync.map 'conns' retrieves incoming net.Conn from map and then deletes it to prevent memory leak
 			v, ok := conns.LoadAndDelete(c)
@@ -249,7 +249,7 @@ func main() {
 			} else {
 				log("sync.map 'conns' could not retrieve incoming net.Conn from map")
 			}
-			// we set the key 'endpointId' on the context, which means we can retrieve it from any handler's request as 
+			// we set the key 'endpointId' on the context, which means we can retrieve it from any handler's request as
 			// `req.Context().Value('endpointId')`
 			return context.WithValue(ctx, "endpointId", s)
 		},
