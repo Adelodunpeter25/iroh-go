@@ -9,5 +9,7 @@ examples/pairchat/pairchat
 examples/simple-pipe/simple-pipe
 examples/echosrv/echosrv
 examples/echosrv/dumbpipe
+examples/echo-endpoint/echo-endpoint
+examples/echo-endpoint/dumbpipe
 examples/timeserve/timeserve
 iroh-go/target/

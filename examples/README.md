@@ -20,5 +20,9 @@ that leverages iroh's functionality.
   la netcat to send files over iroh.
 * [`echosrv`](./echosrv) shows how to set up a simple HTTP echo server
   that is served only over iroh.
+* [`echo-endpoint`](./echo-endpoint) sets up a HTTP echo server that can gate its HTTP
+  routes based on the Iroh public key making requests.
+
+
 
 [tickets]: https://docs.iroh.computer/connect-two-endpoints#what-is-a-ticket
