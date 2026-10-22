@@ -25,6 +25,7 @@ go build -v -a -ldflags '-extldflags "-static"' ./http-dialer.go
 ## Terminal 1 (http server)
 
 ```
+go build ./http-dialer.go
 ./http-dialer 
 // outputs, among other things, an endpoint ticket you need to provide in terminal 2
 ```
@@ -35,7 +36,8 @@ We send a HTTP POST request to our http server over iroh by using the program `h
 from `client/` subdirectory of this example:
 
 ```
-./client/http-client --address <endpoint from terminal1> hello hello
+go build ./client/http-client.go
+./http-client --address <endpoint from terminal1> hello hello
 ```
 
 You should see the string "hello hello" echoed back out to you, prefixed with the
