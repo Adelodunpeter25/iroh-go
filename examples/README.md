@@ -22,6 +22,8 @@ that leverages iroh's functionality.
   that is served only over iroh.
 * [`echo-endpoint`](./echo-endpoint) sets up a HTTP echo server that can gate its HTTP
   routes based on the Iroh public key making requests.
+* [`http-dialer`](./http-dialer) shows how to send a POST request over iroh using the `net/http`
+  standard library approach
 
 
 

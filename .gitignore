@@ -11,5 +11,7 @@ examples/echosrv/echosrv
 examples/echosrv/dumbpipe
 examples/echo-endpoint/echo-endpoint
 examples/echo-endpoint/dumbpipe
+examples/http-dialer/http-dialer
+examples/http-dialer/http-client
 examples/timeserve/timeserve
 iroh-go/target/
