@@ -86,6 +86,7 @@ func log(s string) {
 	}
 }
 
+// IrohConn implements net.Conn (Read,Write,Close + Local/RemoteAddr + Deadline methods)
 type IrohConn struct {
 	sp *SimplePipe
 	addrLocal *IrohAddr
