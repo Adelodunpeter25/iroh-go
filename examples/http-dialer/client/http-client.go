@@ -74,8 +74,6 @@ func (sp *SimplePipe) Write(buf []byte) (int, error) {
 	return n, err
 }
 
-var done = make(chan os.Signal, 1)
-
 var verbose bool
 var httpServerAddress string
 var additionalInput string
@@ -188,16 +186,25 @@ func (ic *IrohConn) SetWriteDeadline(t time.Time) error {
 // Receives addressing information and sets up an iroh connection to the endpoint described by the addressing
 // information, and returns the receive/send streams in a format that golang's net.http ecosystem will accept.
 func DialIroh(network, address string) (net.Conn, error) {
-	// TODO (2026-10-22): can be improved by taking an endpoint or a ticket
 	log(fmt.Sprintf("DialIroh: network %q address %q\n", network, address))
 	remoteEndpointString := strings.Split(address, ":")[0]
+
 	var localEndpointString string
-	log(fmt.Sprintf("DialIroh: endpoint id %q ", remoteEndpointString))
-	remote, err := iroh.EndpointIdFromString(remoteEndpointString)
-	if err := iroh.As(err); err != nil {
-		panic(err)
+
+	var remoteAddr *iroh.EndpointAddr
+	// first try to parse as ticket
+	if ticket, err := iroh.EndpointTicketFromString(remoteEndpointString); err == nil {
+		remoteAddr = ticket.EndpointAddr()
+	} else {
+		// fallback to interpret as endpoint id
+		remote, err := iroh.EndpointIdFromString(remoteEndpointString)
+		if err := iroh.As(err); err != nil {
+			panic(err)
+		}
+		remoteAddr = iroh.NewEndpointAddr(remote, nil, nil)
 	}
-	addr := iroh.NewEndpointAddr(remote, nil, nil)
+
+	log(fmt.Sprintf("DialIroh: endpoint id %q ", remoteAddr.Id().String()))
 
 	preset := iroh.PresetN0()
 	opts := iroh.EndpointOptions{
@@ -217,7 +224,7 @@ func DialIroh(network, address string) (net.Conn, error) {
 
 	log(fmt.Sprintf("online as %s\n", localEndpointString))
 
-	conn, err := e.Connect(addr, alpn)
+	conn, err := e.Connect(remoteAddr, alpn)
 	if err := iroh.As(err); err != nil {
 		panic(err)
 	}
@@ -260,7 +267,6 @@ func main() {
 	}
 	// try to dial and send a POST request
 	resp, err := client.Post(createUrl(httpServerAddress, "/"), "text/plain", bytes.NewBufferString(additionalInput))
-	log(fmt.Sprintf("%s", resp))
 	eout.Check(err, "client.Post")
 	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
