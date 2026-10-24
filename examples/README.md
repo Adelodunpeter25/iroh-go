@@ -18,13 +18,11 @@ that leverages iroh's functionality.
   parties can read and receive data sent over an iroh connection.
 * [`simple-pipe`](./simple-pipe) sets up a directional pipe that can be used à
   la netcat to send files over iroh.
-* [`echosrv`](./echosrv) shows how to set up a simple HTTP echo server
-  that is served only over iroh.
-* [`echo-endpoint`](./echo-endpoint) sets up a HTTP echo server that can gate its HTTP
-  routes based on the Iroh public key making requests.
-* [`http-dialer`](./http-dialer) shows how to send a POST request over iroh using the `net/http`
-  standard library approach
-
-
+* [`echosrv`](./echosrv) shows how to set up a simple HTTP echo server that is
+  served only over iroh.
+* [`echo-endpoint`](./echo-endpoint) sets up a HTTP echo server that can gate
+  its HTTP routes based on the Iroh public key making requests.
+* [`http-dialer`](./http-dialer) shows how to send a POST request over iroh
+  using the `net/http` standard library approach
 
 [tickets]: https://docs.iroh.computer/connect-two-endpoints#what-is-a-ticket
