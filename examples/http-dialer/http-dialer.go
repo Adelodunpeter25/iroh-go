@@ -238,18 +238,21 @@ func main() {
 
 	server := http.Server{
 		Addr: getHost(),
-		// provide an extra key `endpointId` to all incoming http.Request's such that each handler can access the key
-		// for a request as `req.Context().Value('endpointId')`
+		// provide an extra key `endpointId` to all incoming http.Request's such
+		// that each handler can access the key for a request as
+		// `req.Context().Value('endpointId')`
 		ConnContext: func(ctx context.Context, c net.Conn) context.Context {
 			var s string
-			// sync.map 'conns' retrieves incoming net.Conn from map and then deletes it to prevent memory leak
+			// sync.map 'conns' retrieves incoming net.Conn from map and then deletes
+			// it to prevent memory leak
 			v, ok := conns.LoadAndDelete(c)
 			if ok {
 				s = v.(string)
 			} else {
 				log("sync.map 'conns' could not retrieve incoming net.Conn from map")
 			}
-			// we set the key 'endpointId' on the context, which means we can retrieve it from any handler's request as
+			// we set the key 'endpointId' on the context, which means we can
+			// retrieve it from any handler's request as
 			// `req.Context().Value('endpointId')`
 			return context.WithValue(ctx, "endpointId", s)
 		},
