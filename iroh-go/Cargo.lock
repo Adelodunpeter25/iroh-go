@@ -1787,8 +1787,8 @@ dependencies = [
 
 [[package]]
 name = "iroh-ffi"
-version = "1.1.0"
-source = "git+https://github.com/decentral1se/iroh-ffi?rev=455ba0df43d07b1a28890a70f325b71b05ddeb88#455ba0df43d07b1a28890a70f325b71b05ddeb88"
+version = "1.2.0"
+source = "git+https://github.com/decentral1se/iroh-ffi?rev=53e0abb14f3f36b90cdae0df7063910f64cf5299#53e0abb14f3f36b90cdae0df7063910f64cf5299"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -1814,7 +1814,7 @@ dependencies = [
 
 [[package]]
 name = "iroh-go"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "iroh-ffi",
 ]

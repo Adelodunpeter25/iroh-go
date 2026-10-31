@@ -419,6 +419,15 @@ func uniffiCheckChecksums() {
 	}
 	{
 		checksum := rustCall(func(_uniffiStatus *C.RustCallStatus) C.uint16_t {
+			return C.uniffi_iroh_ffi_checksum_func_preset_iroh_services()
+		})
+		if checksum != 59955 {
+			// If this happens try cleaning and rebuilding your project
+			panic("iroh_ffi: uniffi_iroh_ffi_checksum_func_preset_iroh_services: UniFFI API checksum mismatch")
+		}
+	}
+	{
+		checksum := rustCall(func(_uniffiStatus *C.RustCallStatus) C.uint16_t {
 			return C.uniffi_iroh_ffi_checksum_method_accepting_alpn()
 		})
 		if checksum != 1935 {
@@ -1006,7 +1015,7 @@ func uniffiCheckChecksums() {
 		checksum := rustCall(func(_uniffiStatus *C.RustCallStatus) C.uint16_t {
 			return C.uniffi_iroh_ffi_checksum_method_endpointbuilder_secret_key()
 		})
-		if checksum != 35604 {
+		if checksum != 1964 {
 			// If this happens try cleaning and rebuilding your project
 			panic("iroh_ffi: uniffi_iroh_ffi_checksum_method_endpointbuilder_secret_key: UniFFI API checksum mismatch")
 		}
@@ -3963,6 +3972,9 @@ type EndpointBuilderInterface interface {
 	// Set the relay mode.
 	RelayMode(mode *RelayMode)
 	// Set the endpoint secret key (32 bytes).
+	//
+	// Errors if a preset already pinned the key because it minted a credential
+	// scoped to it — see `preset_iroh_services`.
 	SecretKey(bytes []byte) error
 }
 
@@ -4093,6 +4105,9 @@ func (_self *EndpointBuilder) RelayMode(mode *RelayMode) {
 }
 
 // Set the endpoint secret key (32 bytes).
+//
+// Errors if a preset already pinned the key because it minted a credential
+// scoped to it — see `preset_iroh_services`.
 func (_self *EndpointBuilder) SecretKey(bytes []byte) error {
 	_pointer := _self.ffiObject.incrementPointer("*EndpointBuilder")
 	defer _self.ffiObject.decrementPointer()
@@ -8468,6 +8483,76 @@ func (_ FfiDestroyerServicesOptions) Destroy(value ServicesOptions) {
 	value.Destroy()
 }
 
+// Options for [`preset_iroh_services`].
+//
+// Supply *exactly one* of `api_secret` or `api_secret_from_env`.
+type ServicesPresetOptions struct {
+	// Your project's relay URLs. Defaults to the n0 public relays when
+	// omitted, matching `iroh_services::preset()`. Passing an empty list is an
+	// error rather than a silent fallback — that is nearly always a filtered
+	// list that came back empty.
+	Relays *[]string
+	// Encoded API secret string (`services1...`). The relay access token is
+	// minted from this.
+	ApiSecret *string
+	// If true, read the API secret from `IROH_SERVICES_API_SECRET`.
+	ApiSecretFromEnv *bool
+	// The endpoint's own identity key (32 bytes) — not your API secret. The
+	// access token is scoped to it, so pass the same key you persist for your
+	// endpoint's identity. A fresh key is generated when omitted.
+	//
+	// Set the key *here*, not via `EndpointOptions::secret_key` or
+	// `EndpointBuilder::secret_key`: both are layered on top of the preset and
+	// would replace the one the token is scoped to. Doing that is an error,
+	// not a silent auth failure — this preset pins the key.
+	EndpointSecretKey *[]byte
+}
+
+func (r *ServicesPresetOptions) Destroy() {
+	FfiDestroyerOptionalSequenceString{}.Destroy(r.Relays)
+	FfiDestroyerOptionalString{}.Destroy(r.ApiSecret)
+	FfiDestroyerOptionalBool{}.Destroy(r.ApiSecretFromEnv)
+	FfiDestroyerOptionalBytes{}.Destroy(r.EndpointSecretKey)
+}
+
+type FfiConverterServicesPresetOptions struct{}
+
+var FfiConverterServicesPresetOptionsINSTANCE = FfiConverterServicesPresetOptions{}
+
+func (c FfiConverterServicesPresetOptions) Lift(rb RustBufferI) ServicesPresetOptions {
+	return LiftFromRustBuffer[ServicesPresetOptions](c, rb)
+}
+
+func (c FfiConverterServicesPresetOptions) Read(reader io.Reader) ServicesPresetOptions {
+	return ServicesPresetOptions{
+		FfiConverterOptionalSequenceStringINSTANCE.Read(reader),
+		FfiConverterOptionalStringINSTANCE.Read(reader),
+		FfiConverterOptionalBoolINSTANCE.Read(reader),
+		FfiConverterOptionalBytesINSTANCE.Read(reader),
+	}
+}
+
+func (c FfiConverterServicesPresetOptions) Lower(value ServicesPresetOptions) C.RustBuffer {
+	return LowerIntoRustBuffer[ServicesPresetOptions](c, value)
+}
+
+func (c FfiConverterServicesPresetOptions) LowerExternal(value ServicesPresetOptions) ExternalCRustBuffer {
+	return RustBufferFromC(LowerIntoRustBuffer[ServicesPresetOptions](c, value))
+}
+
+func (c FfiConverterServicesPresetOptions) Write(writer io.Writer, value ServicesPresetOptions) {
+	FfiConverterOptionalSequenceStringINSTANCE.Write(writer, value.Relays)
+	FfiConverterOptionalStringINSTANCE.Write(writer, value.ApiSecret)
+	FfiConverterOptionalBoolINSTANCE.Write(writer, value.ApiSecretFromEnv)
+	FfiConverterOptionalBytesINSTANCE.Write(writer, value.EndpointSecretKey)
+}
+
+type FfiDestroyerServicesPresetOptions struct{}
+
+func (_ FfiDestroyerServicesPresetOptions) Destroy(value ServicesPresetOptions) {
+	value.Destroy()
+}
+
 type CallbackError struct {
 	err error
 }
@@ -9436,6 +9521,47 @@ func (_ FfiDestroyerOptionalRelayConfig) Destroy(value *RelayConfig) {
 	}
 }
 
+type FfiConverterOptionalSequenceString struct{}
+
+var FfiConverterOptionalSequenceStringINSTANCE = FfiConverterOptionalSequenceString{}
+
+func (c FfiConverterOptionalSequenceString) Lift(rb RustBufferI) *[]string {
+	return LiftFromRustBuffer[*[]string](c, rb)
+}
+
+func (_ FfiConverterOptionalSequenceString) Read(reader io.Reader) *[]string {
+	if readInt8(reader) == 0 {
+		return nil
+	}
+	temp := FfiConverterSequenceStringINSTANCE.Read(reader)
+	return &temp
+}
+
+func (c FfiConverterOptionalSequenceString) Lower(value *[]string) C.RustBuffer {
+	return LowerIntoRustBuffer[*[]string](c, value)
+}
+
+func (c FfiConverterOptionalSequenceString) LowerExternal(value *[]string) ExternalCRustBuffer {
+	return RustBufferFromC(LowerIntoRustBuffer[*[]string](c, value))
+}
+
+func (_ FfiConverterOptionalSequenceString) Write(writer io.Writer, value *[]string) {
+	if value == nil {
+		writeInt8(writer, 0)
+	} else {
+		writeInt8(writer, 1)
+		FfiConverterSequenceStringINSTANCE.Write(writer, *value)
+	}
+}
+
+type FfiDestroyerOptionalSequenceString struct{}
+
+func (_ FfiDestroyerOptionalSequenceString) Destroy(value *[]string) {
+	if value != nil {
+		FfiDestroyerSequenceString{}.Destroy(*value)
+	}
+}
+
 type FfiConverterOptionalSequenceBytes struct{}
 
 var FfiConverterOptionalSequenceBytesINSTANCE = FfiConverterOptionalSequenceBytes{}
@@ -9842,4 +9968,24 @@ func PresetN0DisableRelay() Preset {
 	return FfiConverterPresetINSTANCE.Lift(rustCall(func(_uniffiStatus *C.RustCallStatus) C.uint64_t {
 		return C.uniffi_iroh_ffi_fn_func_preset_n0_disable_relay(_uniffiStatus)
 	}))
+}
+
+// Build an endpoint preset for your project's dedicated relays.
+//
+// Mirrors `iroh_services::preset()`: mints a short-lived access token scoped to
+// the endpoint's key and to relay use only, then configures the endpoint to use
+// your relays with that token. Pass the result as `EndpointOptions::preset`.
+//
+// The token is minted here, at preset-build time, so build the preset shortly
+// before binding the endpoint.
+func PresetIrohServices(options ServicesPresetOptions) (Preset, error) {
+	_uniffiRV, _uniffiErr := rustCallWithError[*IrohError](FfiConverterIrohError{}, func(_uniffiStatus *C.RustCallStatus) C.uint64_t {
+		return C.uniffi_iroh_ffi_fn_func_preset_iroh_services(FfiConverterServicesPresetOptionsINSTANCE.Lower(options), _uniffiStatus)
+	})
+	if _uniffiErr != nil {
+		var _uniffiDefaultValue Preset
+		return _uniffiDefaultValue, _uniffiErr
+	} else {
+		return FfiConverterPresetINSTANCE.Lift(_uniffiRV), nil
+	}
 }
