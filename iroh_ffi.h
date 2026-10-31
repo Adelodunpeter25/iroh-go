@@ -1673,6 +1673,11 @@ uint64_t uniffi_iroh_ffi_fn_func_preset_n0_disable_relay(RustCallStatus *out_sta
     
 );
 #endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_IROH_FFI_FN_FUNC_PRESET_IROH_SERVICES
+#define UNIFFI_FFIDEF_UNIFFI_IROH_FFI_FN_FUNC_PRESET_IROH_SERVICES
+uint64_t uniffi_iroh_ffi_fn_func_preset_iroh_services(RustBuffer options, RustCallStatus *out_status
+);
+#endif
 #ifndef UNIFFI_FFIDEF_FFI_IROH_FFI_RUSTBUFFER_ALLOC
 #define UNIFFI_FFIDEF_FFI_IROH_FFI_RUSTBUFFER_ALLOC
 RustBuffer ffi_iroh_ffi_rustbuffer_alloc(uint64_t size, RustCallStatus *out_status
@@ -1954,6 +1959,12 @@ uint16_t uniffi_iroh_ffi_checksum_func_preset_n0(void
 #ifndef UNIFFI_FFIDEF_UNIFFI_IROH_FFI_CHECKSUM_FUNC_PRESET_N0_DISABLE_RELAY
 #define UNIFFI_FFIDEF_UNIFFI_IROH_FFI_CHECKSUM_FUNC_PRESET_N0_DISABLE_RELAY
 uint16_t uniffi_iroh_ffi_checksum_func_preset_n0_disable_relay(void
+    
+);
+#endif
+#ifndef UNIFFI_FFIDEF_UNIFFI_IROH_FFI_CHECKSUM_FUNC_PRESET_IROH_SERVICES
+#define UNIFFI_FFIDEF_UNIFFI_IROH_FFI_CHECKSUM_FUNC_PRESET_IROH_SERVICES
+uint16_t uniffi_iroh_ffi_checksum_func_preset_iroh_services(void
     
 );
 #endif
