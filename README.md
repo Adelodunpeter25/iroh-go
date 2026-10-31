@@ -30,7 +30,7 @@ generation. This is a different approach than e.g.
 
 ## Version support
 
-* `iroh`: [`v1.0.3`](https://github.com/n0-computer/iroh/releases/tag/v1.0.3)
+* `iroh`: [`v1.0.0`](https://github.com/n0-computer/iroh/releases/tag/v1.0.0)
 * `iroh-ffi`: [`v1.2.0`](https://github.com/n0-computer/iroh-ffi/releases/tag/v1.2.0)
 
 ## Platform support
