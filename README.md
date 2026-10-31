@@ -19,10 +19,19 @@ static binary with `go build` or [with
 Zig](https://dev.to/kristoff/zig-makes-go-cross-compilation-just-work-29ho).
 `iroh-go` does require `CGO_ENABLED=1`.
 
+## Approach
+
+`iroh-go` is generated directly from
+[`iroh-ffi`](https://github.com/n0-computer/iroh-ffi) guaranteeing
+compatibility and long-term alignment with upstream. Some API wrappers are
+implemented to smooth over some of the unavoidable rough edges of FFI binding
+generation. This is a different approach than e.g.
+[`go-iroh`](https://github.com/tmc/go-iroh) which is a custom port.
+
 ## Version support
 
 * `iroh`: [`v1.0.3`](https://github.com/n0-computer/iroh/releases/tag/v1.0.3)
-* `iroh-ffi`: [`v1.1.0`](https://github.com/n0-computer/iroh-ffi/releases/tag/v1.1.0)
+* `iroh-ffi`: [`v1.2.0`](https://github.com/n0-computer/iroh-ffi/releases/tag/v1.2.0)
 
 ## Platform support
 
