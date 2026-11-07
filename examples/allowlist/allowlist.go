@@ -10,7 +10,7 @@ import (
 	"syscall"
 	"time"
 
-	iroh "git.coopcloud.tech/decentral1se/iroh-go"
+	iroh "github.com/Adelodunpeter25/iroh-go"
 )
 
 var (

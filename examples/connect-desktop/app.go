@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 
-	iroh "git.coopcloud.tech/decentral1se/iroh-go"
+	iroh "github.com/Adelodunpeter25/iroh-go"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 

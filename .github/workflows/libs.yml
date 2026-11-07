@@ -1,0 +1,121 @@
+# Builds libiroh.a for macOS and Windows (Linux libs are already vendored),
+# then proves the Go package links and runs on each OS.
+name: Build libs
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: [iroh-go/**, .github/workflows/libs.yml]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: macos-15
+            target: x86_64-apple-darwin
+          - runner: macos-15
+            target: aarch64-apple-darwin
+          - runner: windows-latest
+            target: x86_64-pc-windows-gnu
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Rust target
+        shell: bash
+        run: |
+          rustup toolchain install stable --profile minimal
+          rustup default stable
+          rustup target add ${{ matrix.target }}
+      - name: Build libiroh.a
+        shell: bash
+        run: cargo build --manifest-path iroh-go/Cargo.toml --target ${{ matrix.target }} --lib --locked --release
+      - name: Stage lib
+        shell: bash
+        run: |
+          mkdir -p libs/${{ matrix.target }}
+          cp iroh-go/target/${{ matrix.target }}/release/libiroh.a libs/${{ matrix.target }}/libiroh.a
+          ls -la libs/${{ matrix.target }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: lib-${{ matrix.target }}
+          path: libs/${{ matrix.target }}/libiroh.a
+          if-no-files-found: error
+
+  # Link the Go package against the fresh libs on each OS.
+  verify:
+    needs: build
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: macos-15
+            target: aarch64-apple-darwin
+          - runner: macos-13
+            target: x86_64-apple-darwin
+          - runner: windows-latest
+            target: x86_64-pc-windows-gnu
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.26"
+      - uses: actions/download-artifact@v4
+        with:
+          name: lib-${{ matrix.target }}
+          path: libs/${{ matrix.target }}
+      - name: Build and smoke test
+        shell: bash
+        env:
+          CGO_ENABLED: 1
+        run: |
+          go build ./...
+          mkdir -p /tmp/smoke && cat > /tmp/smoke/main.go <<'GO'
+          package main
+
+          import (
+          	"fmt"
+
+          	iroh "github.com/Adelodunpeter25/iroh-go"
+          )
+
+          func main() {
+          	preset := iroh.PresetN0DisableRelay()
+          	ep, err := iroh.EndpointBind(iroh.EndpointOptions{Preset: &preset})
+          	if err != nil {
+          		panic(err)
+          	}
+          	fmt.Println("bound", ep.Id())
+          }
+          GO
+          mkdir -p smoke && cp /tmp/smoke/main.go smoke/main.go
+          go run ./smoke
+
+  # Commit the freshly built libs back so `go get` users receive them.
+  publish:
+    needs: verify
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: lib-*
+          path: dl
+      - name: Commit libs
+        run: |
+          for d in dl/lib-*; do
+            t=${d#dl/lib-}
+            mkdir -p libs/$t
+            cp $d/libiroh.a libs/$t/libiroh.a
+          done
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add libs
+          git diff --cached --quiet || git commit -m "Update macOS and Windows libs" && git push

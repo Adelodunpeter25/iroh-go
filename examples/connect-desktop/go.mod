@@ -3,7 +3,7 @@ module go-iroh-desktop-example
 go 1.26.1
 
 require (
-	git.coopcloud.tech/decentral1se/iroh-go v0.0.0-20260623204924-1a469c4ae933
+	github.com/Adelodunpeter25/iroh-go v0.0.0-20260623204924-1a469c4ae933
 	github.com/wailsapp/wails/v2 v2.10.2
 )
 
@@ -37,4 +37,4 @@ require (
 	golang.org/x/text v0.22.0 // indirect
 )
 
-replace git.coopcloud.tech/decentral1se/iroh-go => ../../
+replace github.com/Adelodunpeter25/iroh-go => ../../

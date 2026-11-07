@@ -1,3 +1,3 @@
-module git.coopcloud.tech/decentral1se/iroh-go
+module github.com/Adelodunpeter25/iroh-go
 
 go 1.26.1

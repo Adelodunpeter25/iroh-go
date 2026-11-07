@@ -14,7 +14,7 @@ import (
 
 	"gomod.cblgh.org/cerca/util/eout"
 
-	iroh "git.coopcloud.tech/decentral1se/iroh-go"
+	iroh "github.com/Adelodunpeter25/iroh-go"
 )
 
 var (

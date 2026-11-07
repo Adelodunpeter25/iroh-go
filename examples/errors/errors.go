@@ -3,7 +3,7 @@ package main
 import (
 	"errors"
 
-	iroh "git.coopcloud.tech/decentral1se/iroh-go"
+	iroh "github.com/Adelodunpeter25/iroh-go"
 )
 
 func main() {

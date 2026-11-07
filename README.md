@@ -1,3 +1,9 @@
+> **Fork notice.** This is a fork of [decentral1se/iroh-go](https://git.coopcloud.tech/decentral1se/iroh-go)
+> (Apache-2.0 / MIT, licenses kept in `licenses/`). It adds macOS and Windows
+> static libraries built by `.github/workflows/libs.yml`, and is maintained
+> independently. Module path: `github.com/Adelodunpeter25/iroh-go`.
+> Credit for the bindings goes to the original author.
+
 # `iroh-go`
 
 [![Build Status](https://build.coopcloud.tech/api/badges/decentral1se/iroh-go/status.svg?ref=refs/heads/main)](https://build.coopcloud.tech/decentral1se/iroh-go)
