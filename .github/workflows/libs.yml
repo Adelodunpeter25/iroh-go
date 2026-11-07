@@ -56,10 +56,17 @@ jobs:
         include:
           - runner: macos-15
             target: aarch64-apple-darwin
+            goarch: arm64
+            run: true
+          # macos-15 is arm64: cross-build for Intel, link-check only.
           - runner: macos-15
             target: x86_64-apple-darwin
+            goarch: amd64
+            run: false
           - runner: windows-latest
             target: x86_64-pc-windows-gnu
+            goarch: amd64
+            run: true
     runs-on: ${{ matrix.runner }}
     steps:
       - uses: actions/checkout@v4
@@ -74,6 +81,7 @@ jobs:
         shell: bash
         env:
           CGO_ENABLED: 1
+          GOARCH: ${{ matrix.goarch }}
         run: |
           go build ./...
           mkdir -p /tmp/smoke && cat > /tmp/smoke/main.go <<'GO'
@@ -95,7 +103,11 @@ jobs:
           }
           GO
           mkdir -p smoke && cp /tmp/smoke/main.go smoke/main.go
-          go run ./smoke
+          if [ "${{ matrix.run }}" = "true" ]; then
+            go run ./smoke
+          else
+            go build -o /dev/null ./smoke
+          fi
 
   # Commit the freshly built libs back so `go get` users receive them.
   publish:
